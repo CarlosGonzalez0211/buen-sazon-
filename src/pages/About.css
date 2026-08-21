@@ -1,0 +1,220 @@
+/* About.css */
+.about__story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about__story-img {
+    position: relative;
+}
+
+/* Illustrated panels (replace old photos) */
+.about__illus-panel {
+    height: 480px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.about__illus-svg {
+    width: 75%;
+    max-width: 340px;
+    height: auto;
+    filter: drop-shadow(0 12px 22px rgba(90, 55, 25, 0.45));
+}
+
+.about__story-badge {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    background: var(--paper);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-md);
+}
+
+.about__story-badge img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.about__story-badge p {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--wood-dark);
+    margin: 0;
+}
+
+/* Values */
+.about__values-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+}
+
+.about__value-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all var(--transition);
+}
+
+.about__value-card:hover {
+    border-color: var(--brick);
+    box-shadow: var(--shadow-gold);
+    transform: translateY(-4px);
+}
+
+.about__value-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.about__value-title {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.about__value-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Timeline */
+.about__timeline {
+    max-width: 700px;
+    margin: 2.5rem auto;
+    position: relative;
+}
+
+.about__timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--brick), var(--maize));
+    transform: translateX(-50%);
+}
+
+.about__milestone {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.about__milestone--left {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+.about__milestone--left .about__milestone-content {
+    padding-right: 2.5rem;
+}
+
+.about__milestone--right .about__milestone-content {
+    padding-left: 2.5rem;
+}
+
+.about__milestone-content {
+    flex: 1;
+}
+
+.about__milestone-year {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--brick-dark);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.about__milestone-event {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.about__milestone-dot {
+    width: 16px;
+    height: 16px;
+    background: var(--brick);
+    border: 3px solid var(--maize);
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Food Story */
+.about__food-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about__food-img {
+    width: 100%;
+}
+
+.about__food-img .about__illus-panel {
+    height: 440px;
+}
+
+@media (max-width: 900px) {
+
+    .about__story-grid,
+    .about__food-strip {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .about__illus-panel,
+    .about__food-img .about__illus-panel {
+        height: 320px;
+    }
+
+    .about__values-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about__timeline::before {
+        left: 20px;
+    }
+
+    .about__milestone {
+        flex-direction: row !important;
+        text-align: left !important;
+    }
+
+    .about__milestone--left .about__milestone-content {
+        padding-right: 0;
+        padding-left: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about__values-grid {
+        grid-template-columns: 1fr;
+    }
+}

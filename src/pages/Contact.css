@@ -1,0 +1,203 @@
+/* Contact.css */
+.contact__grid {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 3rem;
+    align-items: start;
+}
+
+.contact__form-wrap {
+    background: var(--bg-card);
+    background-image: var(--tex-paper);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--brick);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 2.5rem;
+}
+
+.contact__form-title {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    margin-bottom: 1.75rem;
+}
+
+.contact__form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.contact__success {
+    background: rgba(110, 138, 63, 0.16);
+    border: 1px solid rgba(110, 138, 63, 0.4);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    color: var(--nopal-dark);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Info Panel */
+.contact__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.contact__info-title {
+    font-size: 1.1rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brick);
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.contact__location-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--brick);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+}
+
+.contact__location-card:hover {
+    border-color: var(--border-strong);
+    border-left-color: var(--brick);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.contact__location-name {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.contact__location-addr,
+.contact__location-phone,
+.contact__location-email {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.contact__location-hours {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.contact__location-hours p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.15rem;
+}
+
+.contact__link {
+    color: var(--brick);
+    font-weight: 600;
+    transition: color var(--transition);
+}
+
+.contact__link:hover {
+    color: var(--brick-dark);
+}
+
+/* Social */
+.contact__social {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+}
+
+.contact__social-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brick);
+    margin-bottom: 1rem;
+}
+
+.contact__social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: all var(--transition);
+}
+
+.contact__social-link:last-child {
+    border-bottom: none;
+}
+
+.contact__social-link:hover {
+    opacity: 0.8;
+}
+
+.contact__social-icon {
+    font-size: 1.25rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cream-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+}
+
+.contact__social-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.contact__social-handle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Map */
+.contact__map {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+    overflow: hidden;
+}
+
+.contact__map iframe {
+    display: block;
+    filter: sepia(12%) saturate(108%);
+}
+
+@media (max-width: 1024px) {
+    .contact__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .contact__form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .contact__form-wrap {
+        padding: 1.5rem;
+    }
+}
