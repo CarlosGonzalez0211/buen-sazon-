@@ -181,9 +181,10 @@
     overflow: hidden;
 }
 
-.contact__map iframe {
-    display: block;
-    filter: sepia(12%) saturate(108%);
+.contact__map-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 @media (max-width: 1024px) {

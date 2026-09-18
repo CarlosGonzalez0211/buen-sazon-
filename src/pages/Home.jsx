@@ -42,9 +42,6 @@ function AnimSection({ children, className = '', delay = 0 }) {
 }
 
 export default function Home() {
-    const openLocations = locations.filter(l => l.status === 'open');
-    const comingSoon = locations.filter(l => l.status === 'coming-soon');
-
     return (
         <main className="home">
             {/* ── HERO ──────────────────────────────────────── */}

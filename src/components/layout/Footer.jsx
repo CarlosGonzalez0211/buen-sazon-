@@ -35,9 +35,9 @@ const footerLinks = [
 ];
 
 const socialLinks = [
-    { icon: '📘', label: 'Facebook', href: 'https://facebook.com' },
-    { icon: '📸', label: 'Instagram', href: 'https://instagram.com' },
-    { icon: '🎵', label: 'TikTok', href: 'https://tiktok.com' },
+    { icon: '📘', label: 'Facebook', href: 'https://facebook.com/ElBuenSazon' },
+    { icon: '📸', label: 'Instagram', href: 'https://instagram.com/elbuensazon_mx' },
+    { icon: '🎵', label: 'TikTok', href: 'https://tiktok.com/@elbuensazon' },
 ];
 
 export default function Footer() {

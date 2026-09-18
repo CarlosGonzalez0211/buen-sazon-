@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { locations } from '../data/locations';
+import MapCard from '../components/MapCard';
 import './Locations.css';
 
 const featureIcons = { 'Drive-through': '🚗', 'Comedor amplio': '🪑', 'Wi-Fi gratis': '📶', 'Estacionamiento': '🅿️', 'Área infantil': '👶', 'Pedidos en línea': '📱', 'Próximamente': '🚧', 'Mayor espacio': '🏢', 'Terraza exterior': '🌿' };
@@ -67,16 +68,7 @@ export default function Locations() {
 
                                             {/* Map */}
                                             <div className="loc-card__map">
-                                                <iframe
-                                                    src={loc.mapUrl}
-                                                    width="100%"
-                                                    height="200"
-                                                    style={{ border: 0, borderRadius: '12px' }}
-                                                    allowFullScreen=""
-                                                    loading="lazy"
-                                                    referrerPolicy="no-referrer-when-downgrade"
-                                                    title={`Mapa ${loc.name}`}
-                                                />
+                                                <MapCard name={loc.name} address={loc.address} height={200} />
                                             </div>
 
                                             <div className="loc-card__actions">

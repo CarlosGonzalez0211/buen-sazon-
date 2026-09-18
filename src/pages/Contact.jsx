@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { locations } from '../data/locations';
+import MapCard from '../components/MapCard';
 import './Contact.css';
 
 const socialLinks = [
-    { icon: '📘', label: 'Facebook', handle: '@ElBuenSazon', href: 'https://facebook.com' },
-    { icon: '📸', label: 'Instagram', handle: '@elbuensazon_mx', href: 'https://instagram.com' },
-    { icon: '🎵', label: 'TikTok', handle: '@elbuensazon', href: 'https://tiktok.com' },
+    { icon: '📘', label: 'Facebook', handle: '@ElBuenSazon', href: 'https://facebook.com/ElBuenSazon' },
+    { icon: '📸', label: 'Instagram', handle: '@elbuensazon_mx', href: 'https://instagram.com/elbuensazon_mx' },
+    { icon: '🎵', label: 'TikTok', handle: '@elbuensazon', href: 'https://tiktok.com/@elbuensazon' },
 ];
 
 export default function Contact() {
@@ -14,9 +15,29 @@ export default function Contact() {
 
     const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
+    const subjectLabels = {
+        reservacion: 'Reservación',
+        pedido: 'Pedido especial',
+        evento: 'Evento privado',
+        queja: 'Comentario / Queja',
+        otro: 'Otro',
+    };
+
+    // No backend exists to receive this form, so we hand the message to the
+    // visitor's own email client instead of silently discarding it.
     const handleSubmit = e => {
         e.preventDefault();
-        // TODO: integrate real form submission
+        const subjectText = subjectLabels[form.subject] || 'Contacto';
+        const body = [
+            `Nombre: ${form.name}`,
+            `Email: ${form.email}`,
+            form.phone && `Teléfono: ${form.phone}`,
+            '',
+            form.message,
+        ].filter(Boolean).join('\n');
+        const mailto = `mailto:hola@elbuensazon.mx?subject=${encodeURIComponent(`[${subjectText}] Mensaje de ${form.name}`)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailto;
+
         setSubmitted(true);
         setTimeout(() => setSubmitted(false), 4000);
         setForm({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -43,10 +64,10 @@ export default function Contact() {
                             <h2 className="contact__form-title">Envíanos un Mensaje</h2>
                             {submitted && (
                                 <div className="contact__success">
-                                    ✅ ¡Mensaje enviado! Te contactaremos pronto.
+                                    ✅ ¡Listo! Abrimos tu app de correo con el mensaje preparado — solo dale enviar.
                                 </div>
                             )}
-                            <form className="contact__form" onSubmit={handleSubmit} noValidate>
+                            <form className="contact__form" onSubmit={handleSubmit}>
                                 <div className="contact__form-row">
                                     <div className="form-group">
                                         <label htmlFor="name" className="form-label">Nombre *</label>
@@ -120,17 +141,12 @@ export default function Contact() {
 
                             {/* Map */}
                             <div className="contact__map">
-                                <h4 className="contact__social-title">Sucursal Centro</h4>
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3394.123456!2d-106.4245!3d31.7385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDQ0JzE4LjYiTiAxMDbCsDI1JzI4LjIiVw!5e0!3m2!1ses!2smx!4v1234567890"
-                                    width="100%"
-                                    height="220"
-                                    style={{ border: 0, borderRadius: '12px' }}
-                                    allowFullScreen=""
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                    title="Mapa Sucursal Centro"
-                                />
+                                <h4 className="contact__social-title">Cómo Llegar</h4>
+                                <div className="contact__map-list">
+                                    {locations.filter(l => l.status === 'open').map(loc => (
+                                        <MapCard key={loc.id} name={loc.name} address={loc.address} height={160} />
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
