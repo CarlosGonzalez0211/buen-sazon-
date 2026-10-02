@@ -5,9 +5,6 @@
 export const brand = {
     name: 'El Buen Sazón',
     tagline: 'Comida mexicana y antojitos con sabor casero',
-    phone: '656 407 1273', // VERIFIED
-    phoneHref: 'tel:+526564071273',
-    whatsapp: 'https://wa.me/526564071273', // VERIFIED number, link format assumed
     email: 'elbuensazonpradera@hotmail.com', // VERIFIED
     facebook: 'https://www.facebook.com/elbuensazonjuarez',
     instagram: 'https://instagram.com/elbuensazonjrz',
@@ -17,6 +14,18 @@ export const brand = {
     recommend: 84,
     reviews: 342,
     timezone: 'America/Ciudad_Juarez',
+};
+
+// Feature flags. Salón Boho is built but hidden (planned for its own site).
+export const features = { boho: false };
+
+// Salón Boho (salón de eventos y catering). VERIFIED (owner).
+export const boho = {
+    phone: '656 100 9950',
+    phoneHref: 'tel:+526561009950',
+    whatsapp: 'https://wa.me/526561009950?text=' + encodeURIComponent('Hola, me gustaría cotizar un evento en Salón Boho.'),
+    email: 'eventosdecorarconmagia@gmail.com',
+    linktree: 'https://linktr.ee/salonboho',
 };
 
 // Day 0 = Sunday. [open, close] in 24h decimal hours. VERIFIED (Facebook "About").
@@ -36,39 +45,47 @@ export const hoursText = [
 
 export const locations = [
     {
-        slug: 'tecnologico',
-        name: 'Tecnológico',
-        zone: 'Pradera · Av. Tecnológico',
-        address: 'Av. Tecnológico #3575-19B, Ciudad Juárez, Chih.', // VERIFIED
-        phone: brand.phone,
-        services: ['Comedor', 'Servicio a domicilio', 'Pedidos por WhatsApp'],
-        uberEats: null, // TODO: URL de Uber Eats de esta sucursal
+        slug: 'ramon-rivera-lara',
+        video: 'https://www.facebook.com/elbuensazonjuarez/videos/1170800437194094/', // video de la sucursal (Facebook)
+        name: 'Ramón Rivera Lara',
+        zone: 'Ciudad Juárez',
+        address: 'Ramón Rivera Lara, 32605 Ciudad Juárez, Chih.', // VERIFIED (owner)
+        phone: '656 407 1273', // VERIFIED (owner): solo la sucursal 1
+        services: ['Comedor', 'Servicio a domicilio', 'Uber Eats'],
+        uberEats: 'https://www.ubereats.com/mx-en/store/el-buen-sazon/V5X5qVfvTm6WIzMCxJrTUA?diningMode=DELIVERY&ps=1&surfaceName=',
         verified: true,
-        note: 'Sucursal principal de nuestra página de Facebook.',
+        note: '',
     },
     {
-        slug: 'sucursal-2',
-        name: 'Segunda sucursal',
-        zone: 'Ciudad Juárez',
-        address: null, // TODO: confirmar dirección
-        phone: brand.phone, // TODO: número propio de la sucursal
-        services: ['Comedor', 'Servicio a domicilio'],
-        uberEats: null, // TODO: URL de Uber Eats de esta sucursal
-        verified: false,
-        note: 'Pronto publicaremos los datos completos de esta sucursal.',
+        slug: 'juarez-mall',
+        video: 'https://www.facebook.com/elbuensazonjuarez/videos/3358380244467691/', // video de la sucursal (Facebook)
+        name: 'Juárez Mall', // name taken from the Uber Eats listing ("suc-juarez-mall"); TODO: confirmar
+        zone: 'Del Márquez',
+        address: 'Av. Ejército Nacional 2701, Del Márquez, 32607 Juárez, Chih.', // VERIFIED (owner)
+        phone: null, // TODO: teléfono de esta sucursal
+        services: ['Comedor', 'Servicio a domicilio', 'Uber Eats'],
+        uberEats: 'https://www.ubereats.com/mx-en/store/el-buen-sazon-suc-juarez-mall/1spa7tVDV9a4VMpFsuO3Hg?diningMode=DELIVERY&ps=1&surfaceName=',
+        verified: true,
+        note: '',
     },
     {
-        slug: 'sucursal-3',
-        name: 'Tercera sucursal',
-        zone: 'Ciudad Juárez',
-        address: null, // TODO: confirmar dirección
-        phone: brand.phone, // TODO: número propio de la sucursal
+        slug: 'troncoso',
+        name: 'Troncoso',
+        zone: 'Fracc. Eco 2000',
+        address: 'Santiago Blancas #1110, Fracc. Eco 2000, Ciudad Juárez, Chih.', // VERIFIED (flyer de próxima apertura)
+        phone: null, // TODO: teléfono de esta sucursal
         services: ['Comedor', 'Servicio a domicilio'],
-        uberEats: null, // TODO: URL de Uber Eats de esta sucursal
-        verified: false,
-        note: 'Pronto publicaremos los datos completos de esta sucursal.',
+        uberEats: null, // TODO: URL de Uber Eats cuando abra
+        comingSoon: true,
+        verified: true,
+        note: 'Próxima apertura. Pronto publicaremos horario y menú.',
     },
 ];
+
+// Phone helpers: each branch has its own number (or none yet).
+const digits = (l) => l?.phone?.replace(/\D/g, '');
+export const telHref = (l) => (digits(l) ? `tel:+52${digits(l)}` : null);
+export const waHref = (l, text) => (digits(l) ? `https://wa.me/52${digits(l)}${text ? `?text=${encodeURIComponent(text)}` : ''}` : null);
 
 export const getLocation = (slug) => locations.find((l) => l.slug === slug);
 

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import logo from '../assets/brand/logo.jpg';
-import { brand, hoursText, locations } from './data';
-import { Arrow, Btn, Reveal, Status } from './ui';
+import { boho, brand, features, hoursText, locations } from './data';
+import { bohoSalon, bohoSalonAlt } from './bohoAssets';
+import { Arrow, Btn, Reveal } from './ui';
 
 export function LocationCards() {
     return (
@@ -9,13 +10,13 @@ export function LocationCards() {
             {locations.map((l, i) => (
                 <Reveal key={l.slug} delay={i * 100}>
                     <div className="shell">
-                        <article className={`card ${i === 0 ? 'card--main' : ''}`}>
-                            <span className="card__num">Sucursal 0{i + 1}</span>
+                        <article className="card">
+                            <span className="card__num">Sucursal {i + 1}</span>
                             <h3>{l.name}</h3>
                             <p className="card__addr">{l.address ?? 'Dirección próximamente'}</p>
-                            <p className="card__hours">{hoursText[0].days} · {hoursText[0].time}</p>
+                            <p className="card__hours">{l.comingSoon ? 'Próxima apertura' : `${hoursText[0].days} · ${hoursText[0].time}`}</p>
                             <div className="card__actions">
-                                <Btn to={`/sucursales/${l.slug}#menu`} tone="light" small>Ver menú</Btn>
+                                <Btn to={`/menu/${l.slug}`} tone="light" small>Ver menú</Btn>
                                 {l.uberEats
                                     ? <Btn href={l.uberEats} tone="ghost-light" small>Uber Eats</Btn>
                                     : <span className="btn btn--sm btn--off" aria-disabled="true">Uber Eats · pronto</span>}
@@ -47,7 +48,7 @@ export default function Home() {
                     <img className="hero2__logo" src={logo} alt="El Buen Sazón, comida mexicana y antojitos" />
                 </div>
                 <div className="hero2__foot">
-                    <Status dark />
+                    <span />
                     <a href="#sucursales" className="hero2__cue">Elige tu sucursal <span><Arrow /></span></a>
                 </div>
             </section>
@@ -94,26 +95,25 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* SALÓN BOHO */}
-            <section className="section boho">
-                <div className="wrap boho__grid">
-                    <Reveal>
-                        <span className="eyebrow">Eventos</span>
-                        <h2 className="h2" style={{ margin: '1rem 0 1.5rem' }}>Tu fiesta, en <em>Salón Boho.</em></h2>
-                        <p className="lede">El salón de eventos de El Buen Sazón. Cumpleaños, reuniones y celebraciones con la comida de siempre.</p>
-                        <div style={{ marginTop: '2rem', display: 'flex', gap: '.8rem', flexWrap: 'wrap' }}>
-                            <Btn to="/salon-boho" tone="light">Conocer el salón</Btn>
-                            <Btn href={brand.whatsapp} tone="ghost">Cotizar</Btn>
-                        </div>
-                    </Reveal>
-                    <Reveal delay={120} className="vslot" aria-label="Video del Salón Boho">
-                        <div className="vslot__frame">
-                            <span className="vslot__play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span>
-                            <small>Video del salón · próximamente</small>
-                        </div>
-                    </Reveal>
-                </div>
-            </section>
+            {/* SALÓN BOHO: hidden via features.boho in data.js */}
+            {features.boho && (
+                <section className="section boho">
+                    <div className="wrap boho__grid">
+                        <Reveal>
+                            <span className="eyebrow">Eventos</span>
+                            <h2 className="h2" style={{ margin: '1rem 0 1.5rem' }}>Tu fiesta, en <em>Salón Boho.</em></h2>
+                            <p className="lede">Salón de eventos y catering. Cumpleaños, bodas y celebraciones en un lugar hecho para quedarse.</p>
+                            <div style={{ marginTop: '2rem', display: 'flex', gap: '.8rem', flexWrap: 'wrap' }}>
+                                <Btn to="/salon-boho" tone="light">Conocer el salón</Btn>
+                                <Btn href={boho.whatsapp} tone="ghost">Cotizar</Btn>
+                            </div>
+                        </Reveal>
+                        <Reveal delay={120} className="boho__art boho__art--photo">
+                            <div className="arch"><div><img src={bohoSalon} alt={bohoSalonAlt} loading="lazy" /></div></div>
+                        </Reveal>
+                    </div>
+                </section>
+            )}
 
             {/* GALERÍA */}
             <section className="section">

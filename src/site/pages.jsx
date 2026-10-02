@@ -1,8 +1,11 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { brand, getLocation, hoursText, locations } from './data';
-import { Arrow, Btn, Reveal, Status } from './ui';
+import { boho, brand, getLocation, hoursText, locations, telHref, waHref } from './data';
+import { Arrow, Btn, OrderButtons, Reveal } from './ui';
 import { LocationCards } from './Home';
 import { photos } from './photos';
+import MenuView from './MenuView';
+import { bohoLogo, bohoSalon, bohoSalonAlt } from './bohoAssets';
+import { menus } from './menus';
 
 function Switcher({ current, base }) {
     return (
@@ -31,8 +34,8 @@ export function MenuChooser() {
                     <div className="mesa__list">
                         {locations.map((l, i) => (
                             <Reveal key={l.slug} delay={i * 60}>
-                                <Link to={`/sucursales/${l.slug}#menu`} className="mesa__row">
-                                    <span className="mesa__n">0{i + 1}</span>
+                                <Link to={`/menu/${l.slug}`} className="mesa__row">
+                                    <span className="mesa__n">{i + 1}</span>
                                     <h3>{l.name}</h3>
                                     <p>{l.address ?? 'Dirección próximamente'}</p>
                                 </Link>
@@ -49,7 +52,7 @@ export function MenuChooser() {
 export function Branch() {
     const { slug } = useParams();
     const l = getLocation(slug);
-    if (!l) return <Navigate to="/sucursales/tecnologico" replace />;
+    if (!l) return <Navigate to="/sucursales/ramon-rivera-lara" replace />;
     const i = locations.indexOf(l);
     const mapHref = l.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.address)}` : null;
 
@@ -58,16 +61,27 @@ export function Branch() {
             <section className="page-hero">
                 <div className="wrap">
                     <p className="crumb"><Link to="/">Inicio</Link> / Sucursales / {l.name}</p>
-                    <h1 className="h1"><em>Sucursal 0{i + 1}</em><br />{l.name}</h1>
+                    <h1 className="h1"><em>Sucursal {i + 1}</em><br />{l.name}</h1>
                     <div style={{ display: 'flex', gap: '.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                        <Status />
-                        <span className="crumb">{l.zone}</span>
+                        <span className="crumb">{l.comingSoon ? `Próxima apertura · ${l.zone}` : l.zone}</span>
                     </div>
                 </div>
             </section>
 
             <section className="section" style={{ paddingTop: 0 }}>
                 <div className="wrap">
+                    {l.video && (
+                        <Reveal className="vframe">
+                            <iframe
+                                title={`Video de la sucursal ${l.name}`}
+                                src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(l.video)}&show_text=false&width=1100&t=0`}
+                                loading="lazy"
+                                scrolling="no"
+                                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                                allowFullScreen
+                            />
+                        </Reveal>
+                    )}
                     <div className="info">
                         <Reveal className="info__cell">
                             <h3>Dirección</h3>
@@ -76,26 +90,25 @@ export function Branch() {
                         </Reveal>
                         <Reveal delay={80} className="info__cell">
                             <h3>Horario</h3>
-                            <ul>{hoursText.map((h) => <li key={h.days}>{h.days}<small>{h.time}</small></li>)}</ul>
+                            {l.comingSoon
+                                ? <p className="pending">Próxima apertura</p>
+                                : <ul>{hoursText.map((h) => <li key={h.days}>{h.days}<small>{h.time}</small></li>)}</ul>}
                         </Reveal>
                         <Reveal delay={160} className="info__cell">
                             <h3>Contacto y servicios</h3>
-                            <p><a href={`tel:+52${l.phone.replace(/\s/g, '')}`}>{l.phone}</a></p>
+                            {l.phone ? <p><a href={telHref(l)}>{l.phone}</a></p> : <p className="pending">Teléfono próximamente</p>}
                             <ul>{l.services.map((s) => <li key={s} style={{ fontSize: '1rem', fontWeight: 500 }}>{s}</li>)}</ul>
                         </Reveal>
                     </div>
 
-                    <Reveal className="slot" id="menu">
-                        <span className="eyebrow">Menú · {l.name}</span>
-                        <h2 className="h2">El menú de esta sucursal <em>va aquí.</em></h2>
-                        <p className="lede">Aquí se mostrarán los platillos y precios de la sucursal {l.name}. Mientras tanto, pídenos el menú por WhatsApp.</p>
-                        <div style={{ display: 'flex', gap: '.8rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                            <Btn href={brand.whatsapp}>Pedir por WhatsApp</Btn>
-                            {l.uberEats
-                                ? <Btn href={l.uberEats} tone="ghost">Pedir en Uber Eats</Btn>
-                                : <span className="btn btn--sm btn--off btn--off-dark" aria-disabled="true">Uber Eats · pronto</span>}
-                        </div>
-                    </Reveal>
+                    {menus[l.slug]
+                        ? <MenuView menu={menus[l.slug]} location={l} />
+                        : (                    <Reveal className="slot" id="menu">
+                            <span className="eyebrow">Menú · {l.name}</span>
+                            <h2 className="h2">El menú de esta sucursal <em>va aquí.</em></h2>
+                            <p className="lede">Aquí se mostrarán los platillos y precios de la sucursal {l.name}. Muy pronto lo verás aquí.</p>
+                            <div style={{ display: 'flex', gap: '.8rem', flexWrap: 'wrap', justifyContent: 'center' }}><OrderButtons location={l} /></div>
+                        </Reveal>)}
 
                     {!l.verified && <p className="crumb" style={{ marginTop: '1.2rem' }}>{l.note}</p>}
                     <Switcher current={slug} base="/sucursales" />
@@ -112,17 +125,37 @@ export function Boho() {
             <section className="page-hero boho" style={{ paddingBottom: '6rem' }}>
                 <div className="wrap boho__grid">
                     <div>
-                        <span className="eyebrow">Salón de eventos</span>
+                        <span className="eyebrow">Salón de eventos y catering</span>
                         <h1 className="h1">Salón <em>Boho</em></h1>
-                        <p className="lede">El salón de eventos de El Buen Sazón. Celebra con nosotros y deja la comida en manos de quien sabe.</p>
-                        <div style={{ marginTop: '2rem' }}><Btn href={brand.whatsapp} tone="light">Cotizar mi evento</Btn></div>
+                        <p className="lede">Celebra en un salón con madera, vegetación y luz cálida. Bodas, cumpleaños y reuniones, con servicio de catering.</p>
+                        <div style={{ marginTop: '2rem', display: 'flex', gap: '.8rem', flexWrap: 'wrap' }}>
+                            <Btn href={boho.whatsapp} tone="light">Cotizar por WhatsApp</Btn>
+                            <Btn href={boho.phoneHref} tone="ghost">Llamar</Btn>
+                        </div>
                     </div>
-                    <div className="boho__art">
-                        <div className="arch"><div><span><b>Salón<br /><em>Boho</em></b><small>Eventos · Ciudad Juárez</small></span></div></div>
+                    <div className="boho__art boho__art--photo">
+                        <div className="arch"><div><img src={bohoSalon} alt={bohoSalonAlt} /></div></div>
                     </div>
                 </div>
             </section>
+
             <section className="section">
+                <div className="wrap">
+                    <div className="bohoinfo">
+                        <Reveal className="bohoinfo__logo">
+                            <img src={bohoLogo} alt="Boho, salón de eventos y catering" />
+                        </Reveal>
+                        <Reveal delay={100} className="bohoinfo__list">
+                            <a href={boho.whatsapp} target="_blank" rel="noreferrer"><span>WhatsApp</span><b>+52 1 {boho.phone}</b></a>
+                            <a href={boho.phoneHref}><span>Teléfono</span><b>{boho.phone}</b></a>
+                            <a href={`mailto:${boho.email}`}><span>Correo</span><b>{boho.email}</b></a>
+                            <a href={boho.linktree} target="_blank" rel="noreferrer"><span>Más información</span><b>linktr.ee/salonboho ↗</b></a>
+                        </Reveal>
+                    </div>
+                </div>
+            </section>
+
+            <section className="section" style={{ paddingTop: 0 }}>
                 <div className="wrap">
                     <Reveal>
                         <span className="eyebrow">Videos</span>
@@ -140,11 +173,11 @@ export function Boho() {
                     </div>
                     <Reveal className="slot" delay={100}>
                         <span className="eyebrow">Reservaciones</span>
-                        <h2 className="h2">Capacidad, paquetes y fechas <em>por WhatsApp.</em></h2>
+                        <h2 className="h2">Capacidad, paquetes y fechas <em>por mensaje.</em></h2>
                         <p className="lede">Cuéntanos tu evento y te respondemos con disponibilidad y cotización.</p>
                         <div style={{ display: 'flex', gap: '.8rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                            <Btn href={brand.whatsapp}>Cotizar mi evento</Btn>
-                            <Btn href={brand.phoneHref} tone="ghost">Llamar al {brand.phone}</Btn>
+                            <Btn href={boho.whatsapp}>Cotizar mi evento</Btn>
+                            <Btn href={boho.phoneHref} tone="ghost">Llamar al {boho.phone}</Btn>
                         </div>
                     </Reveal>
                 </div>
@@ -192,26 +225,27 @@ export function Contact() {
                 <div className="wrap">
                     <span className="eyebrow">Contacto</span>
                     <h1 className="h1">Escríbenos, <em>te atendemos.</em></h1>
-                    <Status />
                 </div>
             </section>
             <section className="section" style={{ paddingTop: 0 }}>
                 <div className="wrap">
-                    <div className="contact">
-                        <Reveal as="div"><a className="big" href={brand.whatsapp} target="_blank" rel="noreferrer"><span>WhatsApp · pedidos</span><b>{brand.phone}</b></a></Reveal>
-                        <Reveal as="div" delay={80}><a className="big alt" href={brand.phoneHref}><span>Llamar</span><b>{brand.phone}</b></a></Reveal>
-                        <Reveal as="div" delay={120}><a className="big alt" href={`mailto:${brand.email}`}><span>Correo</span><b>{brand.email}</b></a></Reveal>
-                        <Reveal as="div" delay={160}><a className="big" href={brand.facebook} target="_blank" rel="noreferrer"><span>Facebook</span><b>/elbuensazonjuarez <Arrow /></b></a></Reveal>
+                    <div className="info">
+                        {locations.map((l, i) => (
+                            <Reveal className="info__cell" key={l.slug} delay={i * 70}>
+                                <h3>Sucursal {i + 1}</h3>
+                                <p style={{ fontSize: '1.5rem', letterSpacing: '-.03em' }}>{l.name}</p>
+                                {l.address ? <p style={{ fontWeight: 500, fontSize: '1rem' }}>{l.address}</p> : <p className="pending">Dirección próximamente</p>}
+                                {l.phone ? <p><a href={telHref(l)}>{l.phone}</a></p> : <p className="pending">Teléfono próximamente</p>}
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem', marginTop: '.4rem' }}>
+                                    {waHref(l) && <Btn href={waHref(l)} small>WhatsApp</Btn>}
+                                    <Btn to={`/sucursales/${l.slug}`} tone="ghost" small>Ver sucursal</Btn>
+                                </div>
+                            </Reveal>
+                        ))}
                     </div>
-                    <div className="info" style={{ marginTop: '1rem' }}>
-                        <div className="info__cell"><h3>Horario</h3><ul>{hoursText.map((h) => <li key={h.days}>{h.days}<small>{h.time}</small></li>)}</ul></div>
-                        {locations.map((l) => (
-                            <div className="info__cell" key={l.slug}>
-                                <h3>{l.name}</h3>
-                                {l.address ? <p>{l.address}</p> : <p className="pending">Dirección próximamente</p>}
-                                <Link to={`/sucursales/${l.slug}`} className="accent">Ver sucursal →</Link>
-                            </div>
-                        )).slice(0, 2)}
+                    <div className="contact" style={{ marginTop: '1rem' }}>
+                        <Reveal as="div"><a className="big alt" href={`mailto:${brand.email}`}><span>Correo</span><b>{brand.email}</b></a></Reveal>
+                        <Reveal as="div" delay={80}><a className="big" href={brand.facebook} target="_blank" rel="noreferrer"><span>Facebook</span><b>/elbuensazonjuarez <Arrow /></b></a></Reveal>
                     </div>
                 </div>
             </section>
@@ -265,6 +299,43 @@ export function Gallery() {
                             </div>
                         </div>
                     ))}
+                </div>
+            </section>
+        </main>
+    );
+}
+
+/* ── /menu/:slug : direct menu link (for QR codes) ── */
+export function MenuPage() {
+    const { slug } = useParams();
+    const l = getLocation(slug);
+    if (!l) return <Navigate to="/menu" replace />;
+    const menu = menus[l.slug];
+    return (
+        <main>
+            <section className="page-hero" style={{ paddingTop: "2.2rem", paddingBottom: 0 }}>
+                <div className="wrap">
+                    <p className="crumb"><Link to="/">Inicio</Link> / <Link to="/menu">Menú</Link> / {l.name}</p>
+                </div>
+            </section>
+            <section className="section" style={{ paddingTop: 0 }}>
+                <div className="wrap">
+                    {menu
+                        ? <MenuView menu={menu} location={l} />
+                        : (
+                            <div className="menuv">
+                                <Reveal className="slot">
+                                    <span className="eyebrow">Menú · {l.name}</span>
+                                    <h2 className="h2">El menú de esta sucursal <em>llega pronto.</em></h2>
+                                    <p className="lede">Muy pronto podrás ver aquí todos los platillos y precios.</p>
+                                    <div style={{ display: 'flex', gap: '.8rem', flexWrap: 'wrap', justifyContent: 'center' }}><OrderButtons location={l} /></div>
+                                </Reveal>
+                            </div>
+                        )}
+                    <div className="switch">
+                        <span>Menú de otra sucursal:</span>
+                        {locations.map((x) => <Link key={x.slug} to={`/menu/${x.slug}`} className={x.slug === slug ? 'active' : ''}>{x.name}</Link>)}
+                    </div>
                 </div>
             </section>
         </main>

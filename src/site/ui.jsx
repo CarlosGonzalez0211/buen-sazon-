@@ -1,5 +1,6 @@
 import { createElement, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import logo from '../assets/brand/logo-sm.png';
 
 export function ScrollTop() {
     const { pathname, hash } = useLocation();
@@ -9,8 +10,7 @@ export function ScrollTop() {
     }, [pathname, hash]);
     return null;
 }
-import logo from '../assets/brand/logo.jpg';
-import { brand, getOpenStatus, hoursText, locations } from './data';
+import { brand, features, hoursText, locations, telHref, waHref } from './data';
 
 export const Arrow = () => (
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -48,20 +48,7 @@ export function Btn({ to, href, tone = 'chile', small, children, ...rest }) {
     return <a href={href} className={cls} target="_blank" rel="noreferrer" {...rest}>{inner}</a>;
 }
 
-export function Status({ dark }) {
-    const [s, setS] = useState(() => getOpenStatus());
-    useEffect(() => {
-        const id = setInterval(() => setS(getOpenStatus()), 60000);
-        return () => clearInterval(id);
-    }, []);
-    return (
-        <span className={`status ${s.open ? 'is-open' : ''} ${dark ? 'status--dark' : ''}`}>
-            <i /> {s.label}
-        </span>
-    );
-}
-
-const links = [
+const allLinks = [
     ['/menu', 'Menú'],
     ['/sucursales', 'Sucursales'],
     ['/salon-boho', 'Salón Boho'],
@@ -69,6 +56,8 @@ const links = [
     ['/nosotros', 'Nosotros'],
     ['/contacto', 'Contacto'],
 ];
+
+const links = allLinks.filter(([to]) => features.boho || to !== '/salon-boho');
 
 export function Navbar() {
     const [open, setOpen] = useState(false);
@@ -78,17 +67,14 @@ export function Navbar() {
     return (
         <header className="nav">
             <div className="nav__bar">
-                <Link to="/" className="nav__brand" aria-label="El Buen Sazón, inicio">
-                    <span className="nav__logo"><img src={logo} alt="" /></span>
-                    <span>El Buen Sazón</span>
-                </Link>
+                <Link to="/" className="nav__brand" aria-label="El Buen Sazón, inicio"><img src={logo} alt="El Buen Sazón, comida mexicana y antojitos" width="520" height="251" /></Link>
                 <nav className="nav__links" aria-label="Principal">
                     {links.map(([to, label]) => (
                         <NavLink key={to} to={to} className={({ isActive }) => (isActive ? 'active' : '')}>{label}</NavLink>
                     ))}
                 </nav>
                 <div className="nav__cta">
-                    <Btn href={brand.whatsapp} small>Pedir</Btn>
+                    <Btn to="/menu" small>Ver menú</Btn>
                     <button className="nav__burger" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Menú">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                             {open ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 7h14M3 13h14" />}
@@ -99,7 +85,7 @@ export function Navbar() {
             <div className={`nav__sheet ${open ? 'is-open' : ''}`} aria-hidden={!open}>
                 <Link to="/" onClick={close}>Inicio</Link>
                 {links.map(([to, label]) => <Link key={to} to={to} onClick={close}>{label}</Link>)}
-                <small>{brand.phone} · {hoursText[0].days} {hoursText[0].time}</small>
+                <small>{hoursText[0].days} {hoursText[0].time}</small>
             </div>
         </header>
     );
@@ -113,7 +99,6 @@ export function Footer() {
                     <div>
                         <h4>El Buen Sazón</h4>
                         <p style={{ maxWidth: '20rem', opacity: .85 }}>{brand.tagline}. Servicio a domicilio disponible.</p>
-                        <div style={{ marginTop: '1.2rem' }}><Status dark /></div>
                     </div>
                     <div>
                         <h4>Sucursales</h4>
@@ -129,16 +114,31 @@ export function Footer() {
                             <li><a href={brand.facebook} target="_blank" rel="noreferrer">Facebook</a></li>
                             <li><a href={brand.instagram} target="_blank" rel="noreferrer">Instagram</a></li>
                             <li><a href={brand.tiktok} target="_blank" rel="noreferrer">TikTok</a></li>
-                            <li><a href={brand.whatsapp} target="_blank" rel="noreferrer">WhatsApp</a></li>
+                            <li><a href={brand.linktree} target="_blank" rel="noreferrer">Linktree</a></li>
                         </ul>
                     </div>
                 </div>
                 <p className="foot__big" aria-hidden="true">El Buen <em>Sazón</em></p>
                 <div className="foot__legal">
                     <span>© {new Date().getFullYear()} El Buen Sazón · Ciudad Juárez, Chihuahua</span>
-                    <a href={brand.phoneHref}>{brand.phone}</a>
+                    <a href={brand.facebook} target="_blank" rel="noreferrer">facebook.com/elbuensazonjuarez</a>
                 </div>
             </div>
         </footer>
+    );
+}
+
+// Order buttons for one branch: WhatsApp + call only if it has a phone, Uber Eats only if it has a link.
+export function OrderButtons({ location, tone = 'chile' }) {
+    const wa = waHref(location, `Hola, quiero hacer un pedido en la sucursal ${location.name}.`);
+    const tel = telHref(location);
+    const none = !wa && !location.uberEats;
+    return (
+        <>
+            {wa && <Btn href={wa} tone={tone}>Pedir por WhatsApp</Btn>}
+            {tel && <Btn href={tel} tone="ghost">Llamar</Btn>}
+            {location.uberEats && <Btn href={location.uberEats} tone="ghost">Uber Eats</Btn>}
+            {none && <span className="btn btn--sm btn--off btn--off-dark" aria-disabled="true">Pedidos · próximamente</span>}
+        </>
     );
 }
