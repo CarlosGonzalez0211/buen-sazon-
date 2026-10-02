@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logo from '../assets/brand/logo.jpg';
+import logo from '../assets/brand/logo-hero.png';
 import { boho, brand, features, hoursText, locations } from './data';
 import { bohoSalon, bohoSalonAlt } from './bohoAssets';
 import { Arrow, Btn, Reveal } from './ui';

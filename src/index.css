@@ -324,15 +324,15 @@ button { font: inherit; cursor: pointer; }
 /* ═══ restructure: logo hero, locations, vibe, boho video, gallery ═══ */
 .hero2 {
     min-height: calc(100dvh - 4.6rem); display: flex; flex-direction: column; justify-content: space-between;
-    background: radial-gradient(ellipse at 50% 45%, #6b3a22 0%, #5a2c18 55%, #431d12 100%); color: var(--paper);
+    background: #4a2314 url('./assets/brand/hero-bg.webp') center / cover no-repeat; color: var(--paper);
     padding: 1.5rem 0 1.8rem; overflow: hidden;
 }
 .hero2__stage { flex: 1; position: relative; min-height: 18rem; }
 .hero2__foot { position: relative; z-index: 1; }
 .hero2__logo {
-    position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(150vw, 1150px, 120dvh); max-width: none; aspect-ratio: 1; object-fit: cover;
-    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 46%, transparent 68%);
-            mask-image: radial-gradient(circle at 50% 50%, #000 46%, transparent 68%);
+    position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+    width: min(88vw, 940px); max-height: 80%; object-fit: contain; height: auto;
+    filter: drop-shadow(0 24px 40px rgba(0,0,0,.35));
     animation: rise 1.4s var(--ease) both;
 }
 @keyframes rise { from { opacity: 0; transform: translateY(1.5rem) scale(.97); } }
