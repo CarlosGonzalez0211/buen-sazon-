@@ -1,0 +1,55 @@
+name: Handle post action
+
+# Fired by api/telegram.js (Vercel) when the approver taps a button in Telegram.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: approve | publish_now | reject
+        required: true
+        type: choice
+        options: [approve, publish_now, reject]
+      post_id:
+        required: true
+        type: string
+      chat_id:
+        required: true
+        type: string
+      message_id:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: drafts
+  cancel-in-progress: false
+
+jobs:
+  handle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply action
+        run: node scripts/handle-action.mjs
+        env:
+          ACTION: ${{ inputs.action }}
+          POST_ID: ${{ inputs.post_id }}
+          CHAT_ID: ${{ inputs.chat_id }}
+          MESSAGE_ID: ${{ inputs.message_id }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          SITE_URL: https://www.elbuensazonjrz.com
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+      - name: Commit draft state
+        run: |
+          git config user.name "buen-sazon-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add drafts
+          git diff --cached --quiet || (git commit -m "chore: update draft ${{ inputs.post_id }}" && git pull --rebase && git push)
