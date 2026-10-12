@@ -1,7 +1,11 @@
 {
   "id": "test-1",
-  "status": "approved",
+  "status": "published",
   "image": "El Buen Sazon Logo Fondo Blanco.jpg",
   "caption": "Prueba del sistema de publicaciones (se borrará en unos minutos)",
-  "scheduled_for": null
+  "scheduled_for": null,
+  "published_on": {
+    "instagram": "18177000718443677",
+    "facebook": "107991585415425_1106136125614456"
+  }
 }
