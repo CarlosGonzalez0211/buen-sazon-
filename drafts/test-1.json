@@ -1,6 +1,6 @@
 {
   "id": "test-1",
-  "status": "draft",
+  "status": "approved",
   "image": "El Buen Sazon Fondo Blanco 2.jpg",
   "caption": "Prueba del sistema de publicaciones 🌮 (este post no se publica)",
   "scheduled_for": null
