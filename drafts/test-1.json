@@ -1,6 +1,6 @@
 {
   "id": "test-1",
-  "status": "draft",
+  "status": "approved",
   "image": "El Buen Sazon Logo Fondo Blanco.jpg",
   "caption": "Prueba del sistema de publicaciones (se borrará en unos minutos)",
   "scheduled_for": null
