@@ -61,7 +61,8 @@ export default async function handler(req, res) {
 
   await telegram('answerCallbackQuery', {
     callback_query_id: cb.id,
-    text: dispatch.ok ? 'Recibido ✅' : 'No se pudo iniciar, intenta de nuevo',
+    text: dispatch.ok ? 'Recibido ✅' : `No se pudo iniciar (GitHub ${dispatch.status})`,
   })
+  if (!dispatch.ok) console.error('dispatch failed', dispatch.status, await dispatch.text())
   return res.status(200).end()
 }
