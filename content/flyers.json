@@ -1,0 +1,179 @@
+{
+ "dish-tacos-alambre": {
+  "images": [
+   "social/dish-tacos-alambre.jpg"
+  ],
+  "family": "red"
+ },
+ "dish-tacos-dorados": {
+  "images": [
+   "social/dish-tacos-dorados.jpg"
+  ],
+  "family": "yellow"
+ },
+ "dish-chiles-rellenos": {
+  "images": [
+   "social/dish-chiles-rellenos.jpg"
+  ],
+  "family": "green"
+ },
+ "dish-chilaquiles-montados": {
+  "images": [
+   "social/dish-chilaquiles-montados.jpg"
+  ],
+  "family": "red"
+ },
+ "dish-chilaquiles-sencillos": {
+  "images": [
+   "social/dish-chilaquiles-sencillos.jpg"
+  ],
+  "family": "white"
+ },
+ "dish-enchiladas-verdes": {
+  "images": [
+   "social/dish-enchiladas-verdes.jpg"
+  ],
+  "family": "yellow"
+ },
+ "dish-caldo-res": {
+  "images": [
+   "social/dish-caldo-res.jpg"
+  ],
+  "family": "green"
+ },
+ "dish-caldo-ranchero": {
+  "images": [
+   "social/dish-caldo-ranchero.jpg"
+  ],
+  "family": "red"
+ },
+ "dish-club-sandwich": {
+  "images": [
+   "social/dish-club-sandwich.jpg"
+  ],
+  "family": "yellow"
+ },
+ "dish-platillo-mexicano": {
+  "images": [
+   "social/dish-platillo-mexicano.jpg"
+  ],
+  "family": "green"
+ },
+ "dish-tostada": {
+  "images": [
+   "social/dish-tostada.jpg"
+  ],
+  "family": "red"
+ },
+ "ritual-martes-caldo": {
+  "images": [
+   "social/ritual-martes-caldo.jpg"
+  ],
+  "family": "yellow"
+ },
+ "ritual-sabado-chilaquiles": {
+  "images": [
+   "social/ritual-sabado-chilaquiles.jpg"
+  ],
+  "family": "red"
+ },
+ "ritual-jueves-tacos": {
+  "images": [
+   "social/ritual-jueves-tacos.jpg"
+  ],
+  "family": "green"
+ },
+ "temporada-frio-caldo-res": {
+  "images": [
+   "social/temporada-frio-caldo-res.jpg"
+  ],
+  "family": "red"
+ },
+ "temporada-frio-caldo-ranchero": {
+  "images": [
+   "social/temporada-frio-caldo-ranchero.jpg"
+  ],
+  "family": "green"
+ },
+ "temporada-frio-enchiladas": {
+  "images": [
+   "social/temporada-frio-enchiladas.jpg"
+  ],
+  "family": "white"
+ },
+ "fecha-candelaria": {
+  "images": [
+   "social/fecha-candelaria.jpg"
+  ],
+  "family": "red"
+ },
+ "fecha-amor-amistad-carrusel": {
+  "images": [
+   "social/fecha-amor-amistad-carrusel-1.jpg",
+   "social/fecha-amor-amistad-carrusel-2.jpg",
+   "social/fecha-amor-amistad-carrusel-3.jpg",
+   "social/fecha-amor-amistad-carrusel-4.jpg"
+  ],
+  "family": "red"
+ },
+ "fecha-madres-teaser": {
+  "images": [
+   "social/fecha-madres-teaser.jpg"
+  ],
+  "family": "red"
+ },
+ "fecha-madres": {
+  "images": [
+   "social/fecha-madres.jpg"
+  ],
+  "family": "white"
+ },
+ "fecha-padre-teaser": {
+  "images": [
+   "social/fecha-padre-teaser.jpg"
+  ],
+  "family": "green"
+ },
+ "fecha-padre": {
+  "images": [
+   "social/fecha-padre.jpg"
+  ],
+  "family": "yellow"
+ },
+ "poll-caldo-chilaquiles": {
+  "images": [
+   "social/poll-caldo-chilaquiles.jpg"
+  ],
+  "family": "mixed"
+ },
+ "poll-tacos-enchiladas": {
+  "images": [
+   "social/poll-tacos-enchiladas.jpg"
+  ],
+  "family": "mixed"
+ },
+ "tag-desayunar": {
+  "images": [
+   "social/tag-desayunar.jpg"
+  ],
+  "family": "red"
+ },
+ "tag-caldo": {
+  "images": [
+   "social/tag-caldo.jpg"
+  ],
+  "family": "yellow"
+ },
+ "statement-frio-caldo": {
+  "images": [
+   "social/statement-frio-caldo.jpg"
+  ],
+  "family": "green"
+ },
+ "statement-chilaquiles": {
+  "images": [
+   "social/statement-chilaquiles.jpg"
+  ],
+  "family": "red"
+ }
+}

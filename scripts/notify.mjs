@@ -5,25 +5,36 @@ import { readFile } from 'node:fs/promises'
 const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, SITE_URL } = process.env
 const id = process.argv[2]
 const post = JSON.parse(await readFile(`drafts/${id}.json`, 'utf8'))
+const url = (p) => encodeURI(`${SITE_URL}/${p}`)
+const tg = (method, body) =>
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${method}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, ...body }),
+  })
 
-const r = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    chat_id: TELEGRAM_CHAT_ID,
-    photo: encodeURI(`${SITE_URL}/${post.image}`),
-    caption: `${post.caption}\n\n— Programado: ${post.scheduled_for || 'sin fecha'}`.slice(0, 1024),
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '✅ Aprobar', callback_data: `apv:${id}` },
-          { text: '🚀 Publicar ya', callback_data: `now:${id}` },
-        ],
-        [{ text: '❌ Rechazar', callback_data: `rej:${id}` }],
-      ],
-    },
-  }),
-})
+const when = post.scheduled_for
+  ? new Date(post.scheduled_for).toLocaleString('es-MX', { timeZone: 'America/Ciudad_Juarez', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })
+  : 'sin fecha'
+const text = `${post.caption_instagram || post.caption}\n\n— Se publica: ${when}`
+const reply_markup = {
+  inline_keyboard: [
+    [
+      { text: '✅ Aprobar', callback_data: `apv:${id}` },
+      { text: '🚀 Publicar ya', callback_data: `now:${id}` },
+    ],
+    [{ text: '❌ Rechazar', callback_data: `rej:${id}` }],
+  ],
+}
+
+let r
+if (post.images?.length > 1) {
+  // Telegram cannot attach buttons to an album, so the slides go first and the buttons follow in a message.
+  r = await tg('sendMediaGroup', { media: post.images.map((p) => ({ type: 'photo', media: url(p) })) })
+  if (r.ok) r = await tg('sendMessage', { text: `🖼️ Carrusel de ${post.images.length} imágenes\n\n${text}`.slice(0, 4096), reply_markup })
+} else {
+  r = await tg('sendPhoto', { photo: url(post.image), caption: text.slice(0, 1024), reply_markup })
+}
 if (!r.ok) {
   console.error(await r.text())
   process.exit(1)

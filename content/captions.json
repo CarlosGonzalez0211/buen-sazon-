@@ -1,0 +1,176 @@
+{
+  "_readme": [
+    "First batch of captions for El Buen Sazón (Plaza Juárez). Spanish, casual, inviting. 'sazón' is masculine: 'el mejor sazón es tuyo'.",
+    "type: dish | ritual | temporada | fecha | poll | tag | statement | anatomia | review | pun_carousel",
+    "photo: yes = needs a dish cutout, optional = may use one, no = text only (pattern background, never solid).",
+    "dishes: cutout names in content/dishes-cutout/. 'any' = the pipeline picks the least recently used.",
+    "when: weekday (tue/thu/sat), season (cold), or holiday id with days_before. Omit when it can be posted any time.",
+    "flyer: what the template needs. hashtags are appended on Instagram only (Facebook gets the text without them).",
+    "status: ready | needs_input (waiting on a fact or choice from the owner). Never invent prices, discounts, hours or ingredients."
+  ],
+  "captions": [
+    {"id": "dish-tacos-alambre", "type": "dish", "photo": "yes", "dishes": ["tacos-alambre"], "status": "ready",
+     "text": "Hoy se antoja algo bien servido 🌮 Pásate por unos tacos de alambre y cuéntanos qué tal.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Tacos"],
+     "flyer": {"template": "hero", "headline": "Tacos de alambre", "variant": "none"}},
+
+    {"id": "dish-tacos-dorados", "type": "dish", "photo": "yes", "dishes": ["tacos-deshebrada"], "status": "ready",
+     "text": "Dorados, crujientes y con ganas de que los pruebes 🌮 ¿Para cuántos pedimos?",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#TacosDorados"],
+     "flyer": {"template": "hero", "headline": "Tacos dorados", "variant": "footer"}},
+
+    {"id": "dish-chiles-rellenos", "type": "dish", "photo": "yes", "dishes": ["chiles-rellenos"], "status": "ready",
+     "text": "Un chile relleno bien hecho arregla el día 🌶️ Aquí te esperamos.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#ChilesRellenos"],
+     "flyer": {"template": "hero", "headline": "Chiles rellenos", "variant": "none"}},
+
+    {"id": "dish-chilaquiles-montados", "type": "dish", "photo": "yes", "dishes": ["chilaquiles-montados"], "status": "ready",
+     "text": "Chilaquiles montados para empezar el día como se debe 🍳 ¿Con quién los compartes?",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Chilaquiles"],
+     "flyer": {"template": "hero", "headline": "Chilaquiles montados", "variant": "kicker", "line": "Buen día"}},
+
+    {"id": "dish-chilaquiles-sencillos", "type": "dish", "photo": "yes", "dishes": ["chilaquiles-sencillos"], "status": "ready",
+     "text": "Sencillos, de los que nunca fallan 💛 Ven por los tuyos.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Chilaquiles"],
+     "flyer": {"template": "hero", "headline": "Chilaquiles", "variant": "none"}},
+
+    {"id": "dish-enchiladas-verdes", "type": "dish", "photo": "yes", "dishes": ["enchiladas-verdes"], "status": "ready",
+     "text": "Enchiladas verdes, de esas que se disfrutan sin prisa 💚 Te esperamos.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Enchiladas"],
+     "flyer": {"template": "hero", "headline": "Enchiladas verdes", "variant": "footer"}},
+
+    {"id": "dish-caldo-res", "type": "dish", "photo": "yes", "dishes": ["caldo-res-2"], "status": "ready",
+     "text": "Un caldo de res calientito y listo para ti 🍲 Ven a disfrutarlo.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#CaldoDeRes"],
+     "flyer": {"template": "hero", "headline": "Caldo de res", "variant": "none"}},
+
+    {"id": "dish-caldo-ranchero", "type": "dish", "photo": "yes", "dishes": ["caldo-ranchero"], "status": "ready",
+     "text": "Caldo ranchero: de esos que abrazan 🫶 Pásate a probarlo.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Caldo"],
+     "flyer": {"template": "hero", "headline": "Caldo ranchero", "variant": "footer"}},
+
+    {"id": "dish-club-sandwich", "type": "dish", "photo": "yes", "dishes": ["club-sandwich"], "status": "ready",
+     "text": "Club sandwich para cuando quieres algo rico y distinto 🥪 ¿Ya lo probaste?",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#ClubSandwich"],
+     "flyer": {"template": "hero", "headline": "Club sandwich", "variant": "none"}},
+
+    {"id": "dish-platillo-mexicano", "type": "dish", "photo": "yes", "dishes": ["platillo-mexicano"], "status": "ready",
+     "text": "Un poquito de todo en un solo plato 🇲🇽 Ven con hambre.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#ComidaMexicana"],
+     "flyer": {"template": "hero", "headline": "Platillo mexicano", "variant": "kicker", "line": "Para el antojo"}},
+
+    {"id": "dish-tostada", "type": "dish", "photo": "yes", "dishes": ["tostada-deshebrada"], "status": "ready",
+     "text": "Tostada de deshebrada, así de simple y así de rica 🤤 Ven por la tuya.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Tostadas"],
+     "flyer": {"template": "hero", "headline": "Tostada de deshebrada", "variant": "none"}},
+
+    {"id": "ritual-martes-caldo", "type": "ritual", "photo": "yes", "dishes": ["caldo-res-2", "caldo-ranchero"], "when": {"weekday": "tue"}, "status": "ready",
+     "text": "Martes, caldo y sin pensarlo 🍲 ¿Con limón o sin limón? Te leemos en los comentarios 👇",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#MartesDeCaldo"],
+     "flyer": {"template": "hero", "headline": "Martes de caldo", "variant": "footer", "line": "¿Con limón o sin limón?"}},
+
+    {"id": "ritual-sabado-chilaquiles", "type": "ritual", "photo": "yes", "dishes": ["chilaquiles-montados", "chilaquiles-sencillos"], "when": {"weekday": "sat"}, "status": "ready",
+     "text": "Sábado se hizo para los chilaquiles 🍳 ¿Quién se anota? Etiqueta a tu compañero de desayuno.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#SábadoDeChilaquiles"],
+     "flyer": {"template": "hero", "headline": "Sábado de chilaquiles", "variant": "kicker", "line": "Ya es sábado"}},
+
+    {"id": "ritual-jueves-tacos", "type": "ritual", "photo": "yes", "dishes": ["tacos-alambre", "tacos-deshebrada"], "when": {"weekday": "thu"}, "status": "ready",
+     "text": "Jueves de tacos 🌮 ¿De alambre o dorados? Tú dinos.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#JuevesDeTacos"],
+     "flyer": {"template": "hero", "headline": "Jueves de tacos", "variant": "footer", "line": "¿De alambre o dorados?"}},
+
+    {"id": "temporada-frio-caldo-res", "type": "temporada", "photo": "yes", "dishes": ["caldo-res-2"], "when": {"season": "cold"}, "status": "ready",
+     "text": "Cuando baja la temperatura, el caldo sube de nivel ☁️🍲 Ven a calentarte con nosotros.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Caldo"],
+     "flyer": {"template": "hero", "headline": "Caldo de res", "variant": "kicker", "line": "Hoy hace frío"}},
+
+    {"id": "temporada-frio-caldo-ranchero", "type": "temporada", "photo": "yes", "dishes": ["caldo-ranchero"], "when": {"season": "cold"}, "status": "ready",
+     "text": "Frío afuera, caldo adentro. Así es la vida 🍲 Pásate.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Caldo"],
+     "flyer": {"template": "hero", "headline": "Caldo ranchero", "variant": "kicker", "line": "Día frío"}},
+
+    {"id": "temporada-frio-enchiladas", "type": "temporada", "photo": "yes", "dishes": ["enchiladas-verdes"], "when": {"season": "cold"}, "status": "ready",
+     "text": "Los días de frío piden algo caliente y con sabor 💚 Aquí lo encuentras.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Enchiladas"],
+     "flyer": {"template": "hero", "headline": "Enchiladas verdes", "variant": "kicker", "line": "Día frío"}},
+
+    {"id": "fecha-candelaria", "type": "fecha", "photo": "optional", "dishes": ["chilaquiles-montados"], "when": {"holiday": "candelaria", "days_before": 1}, "status": "ready",
+     "text": "No tenemos tamales, pero ¿no prefieres unos chilaquiles? 😄 Hoy te esperamos igual.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#DíaDeLaCandelaria"],
+     "flyer": {"template": "lettering", "headline": "No tenemos tamales", "support": "pero, ¿no prefieres unos chilaquiles?"}},
+
+    {"id": "fecha-amor-amistad-carrusel", "type": "pun_carousel", "photo": "optional", "when": {"holiday": "amor-amistad", "days_before": 1}, "status": "ready",
+     "text": "Desliza y etiqueta a quien le va cada frase 💛 ¿Cuál es la tuya?",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#AmorYAmistad"],
+     "flyer": {"template": "pun_carousel", "slides": [
+       {"text": "Eres la salsa de mi taco", "dish": "tacos-deshebrada"},
+       {"text": "Eres el queso de mis chilaquiles", "dish": "chilaquiles-sencillos"},
+       {"text": "Eres el limón de mi caldo", "dish": "caldo-res-2"},
+       {"text": "Etiqueta a tu persona favorita", "final": true}]}},
+
+    {"id": "fecha-madres-teaser", "type": "fecha", "photo": "no", "when": {"holiday": "dia-madres", "days_before": 10}, "status": "ready",
+     "text": "Ya viene el 10 de mayo 💐 ¿Ya sabes dónde vas a comer con mamá? Aquí la esperamos.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#DíaDeLasMadres"],
+     "flyer": {"template": "statement", "lines": [["¿Ya sabes dónde", "head", 100], ["vas a comer", "head", 100], ["con mamá?", "accent", 190]]}},
+
+    {"id": "fecha-madres", "type": "fecha", "photo": "no", "when": {"holiday": "dia-madres", "days_before": 0}, "status": "ready",
+     "text": "Feliz día, mamá 💐 El mejor sazón siempre ha sido el tuyo. Gracias por todo.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#DíaDeLasMadres"],
+     "flyer": {"template": "statement", "lines": [["Feliz día,", "accent", 130], ["mamá", "head", 230], ["El mejor sazón es tuyo.", "body", 52]]}},
+
+    {"id": "fecha-padre-teaser", "type": "fecha", "photo": "no", "when": {"holiday": "dia-padre", "days_before": 10}, "status": "ready",
+     "text": "Se acerca el Día del Padre 🙌 ¿Y si lo invitas a comer? Aquí lo esperamos.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#DíaDelPadre"],
+     "flyer": {"template": "statement", "lines": [["¿Y si invitas", "head", 110], ["a papá", "accent", 200], ["a comer?", "head", 140]]}},
+
+    {"id": "fecha-padre", "type": "fecha", "photo": "no", "when": {"holiday": "dia-padre", "days_before": 0}, "status": "ready",
+     "text": "Feliz Día del Padre 🙌 Gracias por tanto. Hoy toca consentirte.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#DíaDelPadre"],
+     "flyer": {"template": "statement", "lines": [["Feliz día,", "accent", 130], ["papá", "head", 230], ["Gracias por tanto.", "body", 52]]}},
+
+    {"id": "poll-caldo-chilaquiles", "type": "poll", "photo": "no", "status": "ready",
+     "text": "La eterna pregunta 🍲🍳 Cuéntanos en los comentarios y vota también en Stories.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "poll", "question": "¿Qué se antoja hoy?", "left": "Caldo", "right": "Chilaquiles"}},
+
+    {"id": "poll-tacos-enchiladas", "type": "poll", "photo": "no", "status": "ready",
+     "text": "Difícil elección 😅 ¿Tacos o enchiladas? Te leemos 👇",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "poll", "question": "Si tuvieras que elegir", "left": "Tacos", "right": "Enchiladas"}},
+
+    {"id": "tag-desayunar", "type": "tag", "photo": "no", "status": "ready",
+     "text": "Etiqueta a esa persona con quien siempre quieres desayunar 👇",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "statement", "lines": [["Etiqueta a quien", "head", 100], ["invitarías a", "head", 100], ["desayunar", "accent", 160]]}},
+
+    {"id": "tag-caldo", "type": "tag", "photo": "no", "status": "ready",
+     "text": "Todos tenemos a alguien con quien un caldo sabe mejor 🍲 Etiquétalo 👇",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "statement", "lines": [["Etiqueta a tu", "head", 110], ["compañero", "head", 110], ["de caldo", "accent", 170]]}},
+
+    {"id": "statement-frio-caldo", "type": "statement", "photo": "no", "when": {"season": "cold"}, "status": "ready",
+     "text": "Si hace frío, hay caldo. Así de simple 🍲",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "statement", "lines": [["Si hace frío,", "head", 120], ["hay caldo.", "accent", 170]]}},
+
+    {"id": "statement-chilaquiles", "type": "statement", "photo": "no", "status": "ready",
+     "text": "No es una exageración 😌🍳 ¿Estás de acuerdo?",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Chilaquiles"],
+     "flyer": {"template": "statement", "lines": [["Los chilaquiles", "head", 110], ["arreglan", "head", 110], ["todo.", "accent", 220]]}},
+
+    {"id": "anatomia-alambre", "type": "anatomia", "photo": "yes", "dishes": ["tacos-alambre"], "status": "needs_input", "needs": "the real ingredient list for this dish",
+     "text": "Así se ve por dentro 👀 Cada parte del plato tiene su razón. ¿Cuál es tu favorita?",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#AnatomíaDelPlato"],
+     "flyer": {"template": "anatomy", "title": "Anatomía del alambre", "labels": "pending: owner's ingredient list"}},
+
+    {"id": "review-gracias-1", "type": "review", "photo": "no", "status": "needs_input", "needs": "a real Google review chosen by the owner",
+     "text": "Gracias por tus palabras 🙏 Nos alegra mucho que lo disfrutes.",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "review", "quote": "pending: real review text", "credit": "Cliente en Google"}},
+
+    {"id": "review-gracias-2", "type": "review", "photo": "no", "status": "needs_input", "needs": "a real Google review chosen by the owner",
+     "text": "Cada reseña nos motiva a seguir. Gracias 💛",
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez"],
+     "flyer": {"template": "review", "quote": "pending: real review text", "credit": "Cliente en Google"}}
+  ]
+}
