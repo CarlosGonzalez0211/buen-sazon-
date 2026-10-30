@@ -72,19 +72,20 @@ def layout_type(rows, avail_h, max_w):
     return f, cap, int(gf * cap)
 
 
-def poster(dish, rows, bg, name, sub=None, dish_w=880, tilt=-8, type_top=200, min_visible=0.72, plate_bottom=118, swipe=False):
+def poster(dish, rows, bg, name, sub=None, dish_w=1120, tilt=-6, type_top=None, min_visible=0.66, plate_bottom=64, swipe=False):
     fam = BG_FAMILY[bg]
     sc = SCHEMES[fam]
     canvas, d, t = T.base(bg)
     rows = [r.upper() for r in rows]
     x0, maxw = 62 * S, (W - 124) * S
+    type_top = type_top or (222 if sub or swipe else 196)  # a small line above the type when there is one
 
     # plate first: its size decides how much room the type gets
     img = finish_plate(T.cutout(dish, width=dish_w))
     img = img.rotate(tilt, resample=Image.BICUBIC, expand=True)
     pw, ph = img.size
     bottom = (H - plate_bottom) * S
-    type_h = bottom - int(0.38 * ph) - type_top * S  # the plate rises over the lower part of the stack
+    type_h = bottom - int(0.92 * ph) - type_top * S  # the plate is the star: the type gets what is left above it, and the plate rises over its last row
     f, cap, gap = layout_type(rows, type_h, maxw)
 
     # type: one mask per row (to measure what the plate hides) and the drawn rows
@@ -109,9 +110,9 @@ def poster(dish, rows, bg, name, sub=None, dish_w=880, tilt=-8, type_top=200, mi
     stats = {}
     for rise in range(0, 140 * S, 16):
         for dx in range(0, 760 * S, 16):
-            px0 = int(W * S * 0.18) + dx
+            px0 = -int(0.05 * pw) + dx
             py0 = bottom - ph - rise
-            if px0 + pw > W * S + int(0.12 * pw) or py0 + ph > H * S - 110 * S:
+            if px0 + pw > W * S + int(0.16 * pw) or py0 + ph > H * S - 40 * S:
                 continue
             x, y = px0 // q, py0 // q
             pa = np.zeros((H * S // q, W * S // q), bool)
@@ -123,18 +124,19 @@ def poster(dish, rows, bg, name, sub=None, dish_w=880, tilt=-8, type_top=200, mi
             stats[(min(vis) >= min_visible, first_ok, overlap >= 0.10)] = stats.get((min(vis) >= min_visible, first_ok, overlap >= 0.10), 0) + 1
             if min(vis) < min_visible or not first_ok or overlap < 0.10:
                 continue
-            score = -overlap * 100 + dx * 0.004 + rise * 0.004  # more overlap first, then stay low and central
+            score = abs(overlap - 0.24) * 100 + dx * 0.004 + rise * 0.01  # about a quarter of the busiest row hidden: clearly overlapped, still readable; keep the plate low
             if best is None or score < best[0]:
                 best = (score, px0, py0)
     if best is None:
         # smaller plate first, then a slightly looser readability rule
-        if dish_w > 600:
-            return poster(dish, rows, bg, name, sub, dish_w - 50, tilt, type_top, min_visible, plate_bottom, swipe)
-        if min_visible > 0.6:
-            return poster(dish, rows, bg, name, sub, 880, tilt, type_top, min_visible - 0.05, plate_bottom, swipe)
+        if dish_w > 800:
+            return poster(dish, rows, bg, name, sub, dish_w - 40, tilt, type_top, min_visible, plate_bottom, swipe)
+        if min_visible > 0.5:
+            return poster(dish, rows, bg, name, sub, 1120, tilt, type_top, min_visible - 0.04, plate_bottom, swipe)
         raise RuntimeError(f"no plate position keeps {name} readable: {stats}")
     else:
         _, px0, py0 = best
+        print('  ', name, 'dish_w', dish_w, 'min_visible', min_visible, 'plate', px0 // S, py0 // S, pw // S, ph // S, 'type_bottom', type_bottom // S, 'score', round(best[0], 2))
 
     # cast shadow multiplied onto everything underneath, then a tight contact shadow, then the plate
     arr = np.array(canvas.convert("RGB")).astype(np.float32)
@@ -155,8 +157,18 @@ def poster(dish, rows, bg, name, sub=None, dish_w=880, tilt=-8, type_top=200, mi
     lg = Image.open(BRAND / "logos" / t["logo"]).convert("RGBA")
     lg = lg.resize((200 * S, int(lg.height * 200 * S / lg.width)), Image.LANCZOS)
     canvas.alpha_composite(lg, (W * S - 56 * S - lg.width, 52 * S))
-    footer(canvas, sc, x0, sub, swipe)
+    top_line(canvas, sc, x0, sub, swipe)
     return save_final(canvas, name)
+
+
+def top_line(canvas, sc, x0, sub=None, swipe=False):
+    """Small line above the type (the plate owns the bottom): the line on the left, DESLIZA on the right."""
+    d = ImageDraw.Draw(canvas)
+    if sub:
+        d.text((x0, 190 * S), sub.upper(), font=nun(34 * S), fill=sc['small'], anchor='ls')
+    if swipe:
+        d.text((W * S - 130 * S, 190 * S), 'DESLIZA', font=nun(34 * S), fill=sc['small'], anchor='rs')
+        T.arrow(d, W * S - 56 * S, 178 * S, 20 * S, sc['small'])
 
 
 def footer(canvas, sc, x0, sub=None, swipe=False):

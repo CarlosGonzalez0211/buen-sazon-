@@ -1,178 +1,178 @@
 {
  "dish-tacos-alambre": {
   "images": [
-   "social/dish-tacos-alambre-v2.jpg"
+   "social/dish-tacos-alambre-v3.jpg"
   ],
   "family": "red"
  },
  "dish-tacos-dorados": {
   "images": [
-   "social/dish-tacos-dorados-v2.jpg"
+   "social/dish-tacos-dorados-v3.jpg"
   ],
   "family": "yellow"
  },
  "dish-chiles-rellenos": {
   "images": [
-   "social/dish-chiles-rellenos-v2.jpg"
+   "social/dish-chiles-rellenos-v3.jpg"
   ],
   "family": "green"
  },
  "dish-chilaquiles-montados": {
   "images": [
-   "social/dish-chilaquiles-montados-v2.jpg"
+   "social/dish-chilaquiles-montados-v3.jpg"
   ],
   "family": "red"
  },
  "dish-chilaquiles-sencillos": {
   "images": [
-   "social/dish-chilaquiles-sencillos-v2.jpg"
+   "social/dish-chilaquiles-sencillos-v3.jpg"
   ],
   "family": "white"
  },
  "dish-enchiladas-verdes": {
   "images": [
-   "social/dish-enchiladas-verdes-v2.jpg"
+   "social/dish-enchiladas-verdes-v3.jpg"
   ],
   "family": "yellow"
  },
  "dish-caldo-res": {
   "images": [
-   "social/dish-caldo-res-v2.jpg"
+   "social/dish-caldo-res-v3.jpg"
   ],
   "family": "green"
  },
  "dish-caldo-ranchero": {
   "images": [
-   "social/dish-caldo-ranchero-v2.jpg"
+   "social/dish-caldo-ranchero-v3.jpg"
   ],
   "family": "red"
  },
  "dish-club-sandwich": {
   "images": [
-   "social/dish-club-sandwich-v2.jpg"
+   "social/dish-club-sandwich-v3.jpg"
   ],
   "family": "yellow"
  },
  "dish-platillo-mexicano": {
   "images": [
-   "social/dish-platillo-mexicano-v2.jpg"
+   "social/dish-platillo-mexicano-v3.jpg"
   ],
   "family": "green"
  },
  "dish-tostada": {
   "images": [
-   "social/dish-tostada-v2.jpg"
+   "social/dish-tostada-v3.jpg"
   ],
   "family": "red"
  },
  "ritual-martes-caldo": {
   "images": [
-   "social/ritual-martes-caldo-v2.jpg"
+   "social/ritual-martes-caldo-v3.jpg"
   ],
   "family": "yellow"
  },
  "ritual-sabado-chilaquiles": {
   "images": [
-   "social/ritual-sabado-chilaquiles-v2.jpg"
+   "social/ritual-sabado-chilaquiles-v3.jpg"
   ],
   "family": "red"
  },
  "ritual-jueves-tacos": {
   "images": [
-   "social/ritual-jueves-tacos-v2.jpg"
+   "social/ritual-jueves-tacos-v3.jpg"
   ],
   "family": "green"
  },
  "temporada-frio-caldo-res": {
   "images": [
-   "social/temporada-frio-caldo-res-v2.jpg"
+   "social/temporada-frio-caldo-res-v3.jpg"
   ],
   "family": "red"
  },
  "temporada-frio-caldo-ranchero": {
   "images": [
-   "social/temporada-frio-caldo-ranchero-v2.jpg"
+   "social/temporada-frio-caldo-ranchero-v3.jpg"
   ],
   "family": "green"
  },
  "temporada-frio-enchiladas": {
   "images": [
-   "social/temporada-frio-enchiladas-v2.jpg"
+   "social/temporada-frio-enchiladas-v3.jpg"
   ],
   "family": "white"
  },
  "fecha-candelaria": {
   "images": [
-   "social/fecha-candelaria-v2.jpg"
+   "social/fecha-candelaria-v3.jpg"
   ],
   "family": "red"
  },
  "fecha-amor-amistad-carrusel": {
   "images": [
-   "social/fecha-amor-amistad-carrusel-1-v2.jpg",
-   "social/fecha-amor-amistad-carrusel-2-v2.jpg",
-   "social/fecha-amor-amistad-carrusel-3-v2.jpg",
-   "social/fecha-amor-amistad-carrusel-4-v2.jpg"
+   "social/fecha-amor-amistad-carrusel-1-v3.jpg",
+   "social/fecha-amor-amistad-carrusel-2-v3.jpg",
+   "social/fecha-amor-amistad-carrusel-3-v3.jpg",
+   "social/fecha-amor-amistad-carrusel-4-v3.jpg"
   ],
   "family": "red"
  },
  "fecha-madres-teaser": {
   "images": [
-   "social/fecha-madres-teaser-v2.jpg"
+   "social/fecha-madres-teaser-v3.jpg"
   ],
   "family": "red"
  },
  "fecha-madres": {
   "images": [
-   "social/fecha-madres-v2.jpg"
+   "social/fecha-madres-v3.jpg"
   ],
   "family": "white"
  },
  "fecha-padre-teaser": {
   "images": [
-   "social/fecha-padre-teaser-v2.jpg"
+   "social/fecha-padre-teaser-v3.jpg"
   ],
   "family": "green"
  },
  "fecha-padre": {
   "images": [
-   "social/fecha-padre-v2.jpg"
+   "social/fecha-padre-v3.jpg"
   ],
   "family": "yellow"
  },
  "poll-caldo-chilaquiles": {
   "images": [
-   "social/poll-caldo-chilaquiles-v2.jpg"
+   "social/poll-caldo-chilaquiles-v3.jpg"
   ],
   "family": "yellow"
  },
  "poll-tacos-enchiladas": {
   "images": [
-   "social/poll-tacos-enchiladas-v2.jpg"
+   "social/poll-tacos-enchiladas-v3.jpg"
   ],
   "family": "green"
  },
  "tag-desayunar": {
   "images": [
-   "social/tag-desayunar-v2.jpg"
+   "social/tag-desayunar-v3.jpg"
   ],
   "family": "red"
  },
  "tag-caldo": {
   "images": [
-   "social/tag-caldo-v2.jpg"
+   "social/tag-caldo-v3.jpg"
   ],
   "family": "yellow"
  },
  "statement-frio-caldo": {
   "images": [
-   "social/statement-frio-caldo-v2.jpg"
+   "social/statement-frio-caldo-v3.jpg"
   ],
   "family": "green"
  },
  "statement-chilaquiles": {
   "images": [
-   "social/statement-chilaquiles-v2.jpg"
+   "social/statement-chilaquiles-v3.jpg"
   ],
   "family": "red"
  }

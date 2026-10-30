@@ -12,7 +12,7 @@ D = lambda dish, rows, bg, sub=None, **kw: ("dish", dict(dish=dish, rows=rows, b
 T_ = lambda rows, bg, **kw: ("type", dict(rows=rows, bg=bg, **kw))
 
 LIB = [
-    ("dish-tacos-alambre", [D("tacos-alambre", ["Tacos", "de", "alam", "bre"], "red-tonal")]),
+    ("dish-tacos-alambre", [D("tacos-alambre", ["Tacos de", "alambre"], "red-tonal")]),
     ("dish-tacos-dorados", [D("tacos-deshebrada", ["Tacos", "dora", "dos"], "yellow-tonal", "Ven a disfrutarlos")]),
     ("dish-chiles-rellenos", [D("chiles-rellenos", ["Chiles", "relle", "nos"], "green-tonal")]),
     ("dish-chilaquiles-montados", [D("chilaquiles-montados", ["Hoy", "toca", "chila", "quiles"], "red-tonal", "Ven a disfrutarlos")]),
