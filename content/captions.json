@@ -89,10 +89,10 @@
      "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Caldo"],
      "flyer": {"template": "hero", "headline": "Caldo ranchero", "variant": "kicker", "line": "Día frío"}},
 
-    {"id": "temporada-frio-enchiladas", "type": "temporada", "photo": "yes", "dishes": ["enchiladas-verdes"], "when": {"season": "cold"}, "status": "ready",
+    {"id": "temporada-frio-caldo", "type": "temporada", "photo": "yes", "dishes": ["caldo-res-2"], "when": {"season": "cold"}, "status": "ready",
      "text": "Los días de frío piden algo caliente y con sabor 💚 Aquí lo encuentras.",
-     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Enchiladas"],
-     "flyer": {"template": "hero", "headline": "Enchiladas verdes", "variant": "kicker", "line": "Día frío"}},
+     "hashtags": ["#ElBuenSazón", "#CiudadJuárez", "#Caldo"],
+     "flyer": {"template": "hero", "headline": "Caldo de res", "variant": "kicker", "line": "Día frío"}},
 
     {"id": "fecha-candelaria", "type": "fecha", "photo": "optional", "dishes": ["chilaquiles-montados"], "when": {"holiday": "candelaria", "days_before": 1}, "status": "ready",
      "text": "No tenemos tamales, pero ¿no prefieres unos chilaquiles? 😄 Hoy te esperamos igual.",
