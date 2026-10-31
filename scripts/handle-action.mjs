@@ -44,7 +44,7 @@ if (ACTION === 'reject') {
     await publish(post, save)
     post.status = 'published'
     await writeFile(file, JSON.stringify(post, null, 2) + '\n')
-    await setStatusLine('🚀 Publicado.')
+    await setStatusLine(`🚀 Publicado.${post.facebook_error ? `\n⚠️ En Facebook no se pudo: ${post.facebook_error}` : ''}`)
   } catch (e) {
     await setStatusLine(`⚠️ Aprobado, pero no se pudo publicar ahora: ${e.message}`)
   }

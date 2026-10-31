@@ -3,109 +3,127 @@
   "images": [
    "social/dish-tacos-alambre-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/dish-tacos-alambre-story-v4.jpg"
  },
  "dish-tacos-dorados": {
   "images": [
    "social/dish-tacos-dorados-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/dish-tacos-dorados-story-v4.jpg"
  },
  "dish-chiles-rellenos": {
   "images": [
    "social/dish-chiles-rellenos-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/dish-chiles-rellenos-story-v4.jpg"
  },
  "dish-chilaquiles-montados": {
   "images": [
    "social/dish-chilaquiles-montados-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/dish-chilaquiles-montados-story-v4.jpg"
  },
  "dish-chilaquiles-sencillos": {
   "images": [
    "social/dish-chilaquiles-sencillos-v4.jpg"
   ],
-  "family": "white"
+  "family": "white",
+  "story": "social/dish-chilaquiles-sencillos-story-v4.jpg"
  },
  "dish-enchiladas-verdes": {
   "images": [
    "social/dish-enchiladas-verdes-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/dish-enchiladas-verdes-story-v4.jpg"
  },
  "dish-caldo-res": {
   "images": [
    "social/dish-caldo-res-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/dish-caldo-res-story-v4.jpg"
  },
  "dish-caldo-ranchero": {
   "images": [
    "social/dish-caldo-ranchero-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/dish-caldo-ranchero-story-v4.jpg"
  },
  "dish-club-sandwich": {
   "images": [
    "social/dish-club-sandwich-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/dish-club-sandwich-story-v4.jpg"
  },
  "dish-platillo-mexicano": {
   "images": [
    "social/dish-platillo-mexicano-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/dish-platillo-mexicano-story-v4.jpg"
  },
  "dish-tostada": {
   "images": [
    "social/dish-tostada-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/dish-tostada-story-v4.jpg"
  },
  "ritual-martes-caldo": {
   "images": [
    "social/ritual-martes-caldo-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/ritual-martes-caldo-story-v4.jpg"
  },
  "ritual-sabado-chilaquiles": {
   "images": [
    "social/ritual-sabado-chilaquiles-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/ritual-sabado-chilaquiles-story-v4.jpg"
  },
  "ritual-jueves-tacos": {
   "images": [
    "social/ritual-jueves-tacos-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/ritual-jueves-tacos-story-v4.jpg"
  },
  "temporada-frio-caldo-res": {
   "images": [
    "social/temporada-frio-caldo-res-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/temporada-frio-caldo-res-story-v4.jpg"
  },
  "temporada-frio-caldo-ranchero": {
   "images": [
    "social/temporada-frio-caldo-ranchero-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/temporada-frio-caldo-ranchero-story-v4.jpg"
  },
  "temporada-frio-caldo": {
   "images": [
    "social/temporada-frio-caldo-v4.jpg"
   ],
-  "family": "white"
+  "family": "white",
+  "story": "social/temporada-frio-caldo-story-v4.jpg"
  },
  "fecha-candelaria": {
   "images": [
    "social/fecha-candelaria-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/fecha-candelaria-story-v4.jpg"
  },
  "fecha-amor-amistad-carrusel": {
   "images": [
@@ -114,66 +132,77 @@
    "social/fecha-amor-amistad-carrusel-3-v4.jpg",
    "social/fecha-amor-amistad-carrusel-4-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/fecha-amor-amistad-carrusel-1-story-v4.jpg"
  },
  "fecha-madres-teaser": {
   "images": [
    "social/fecha-madres-teaser-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/fecha-madres-teaser-story-v4.jpg"
  },
  "fecha-madres": {
   "images": [
    "social/fecha-madres-v4.jpg"
   ],
-  "family": "white"
+  "family": "white",
+  "story": "social/fecha-madres-story-v4.jpg"
  },
  "fecha-padre-teaser": {
   "images": [
    "social/fecha-padre-teaser-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/fecha-padre-teaser-story-v4.jpg"
  },
  "fecha-padre": {
   "images": [
    "social/fecha-padre-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/fecha-padre-story-v4.jpg"
  },
  "poll-caldo-chilaquiles": {
   "images": [
    "social/poll-caldo-chilaquiles-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/poll-caldo-chilaquiles-story-v4.jpg"
  },
  "poll-tacos-enchiladas": {
   "images": [
    "social/poll-tacos-enchiladas-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/poll-tacos-enchiladas-story-v4.jpg"
  },
  "tag-desayunar": {
   "images": [
    "social/tag-desayunar-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/tag-desayunar-story-v4.jpg"
  },
  "tag-caldo": {
   "images": [
    "social/tag-caldo-v4.jpg"
   ],
-  "family": "yellow"
+  "family": "yellow",
+  "story": "social/tag-caldo-story-v4.jpg"
  },
  "statement-frio-caldo": {
   "images": [
    "social/statement-frio-caldo-v4.jpg"
   ],
-  "family": "green"
+  "family": "green",
+  "story": "social/statement-frio-caldo-story-v4.jpg"
  },
  "statement-chilaquiles": {
   "images": [
    "social/statement-chilaquiles-v4.jpg"
   ],
-  "family": "red"
+  "family": "red",
+  "story": "social/statement-chilaquiles-story-v4.jpg"
  }
 }

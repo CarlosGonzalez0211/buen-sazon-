@@ -126,6 +126,21 @@ function build(date, c) {
   }
 }
 
+// A Story goes with every feed post: same flyer, 1080x1920, approved on its own and published at 3 PM local.
+function buildStory(date, c) {
+  const story = flyers[c.id].story
+  if (!story) return null
+  return {
+    id: `${date}-story`,
+    kind: 'story',
+    status: 'draft',
+    story_of: c.id, // not caption_id: stories do not count in the feed rotation
+    image: story,
+    scheduled_for: new Date(noonLocalToUtc(date).getTime() + 3 * 3600 * 1000).toISOString(),
+    created_at: new Date().toISOString(),
+  }
+}
+
 // ---- run -------------------------------------------------------------------
 const start = process.env.POST_DATE || addDays(ymd(new Date()), 1)
 const planIdx = process.argv.indexOf('--plan')
@@ -143,12 +158,14 @@ if (planIdx > -1) {
     shown++
   }
 } else {
-  if (live().some((d) => d.scheduled_for?.slice(0, 10) === noonLocalToUtc(start).toISOString().slice(0, 10))) {
+  if (live().some((d) => d.kind !== 'story' && d.scheduled_for?.slice(0, 10) === noonLocalToUtc(start).toISOString().slice(0, 10))) {
     throw new Error(`Ya hay un borrador para el ${start}`)
   }
   const c = pick(start, history)
   const draft = build(start, c)
   await writeFile(`drafts/${draft.id}.json`, JSON.stringify(draft, null, 2) + '\n')
+  const story = buildStory(start, c)
+  if (story) await writeFile(`drafts/${story.id}.json`, JSON.stringify(story, null, 2) + '\n')
   console.log(draft.id)
 }
 

@@ -40,8 +40,12 @@ jobs:
           git commit -m "chore: new draft ${{ steps.gen.outputs.id }} [skip ci]"
           git pull --rebase && git push
       - name: Send to Telegram
-        run: node scripts/notify.mjs "${{ steps.gen.outputs.id }}"
+        run: |
+          node scripts/notify.mjs "${{ steps.gen.outputs.id }}"
+          story="$(echo "${{ steps.gen.outputs.id }}" | cut -c1-10)-story"
+          if [ -f "drafts/$story.json" ]; then node scripts/notify.mjs "$story"; fi
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_EXTRA_CHAT_IDS: ${{ vars.TELEGRAM_EXTRA_CHAT_IDS }}
           SITE_URL: https://www.elbuensazonjrz.com
