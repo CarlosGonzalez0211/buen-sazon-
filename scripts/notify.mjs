@@ -3,8 +3,9 @@
 import { readFile } from 'node:fs/promises'
 
 const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, SITE_URL } = process.env
-const id = process.argv[2]
-const post = JSON.parse(await readFile(`drafts/${id}.json`, 'utf8'))
+const weekMode = process.argv[2] === '--week'
+const id = weekMode ? process.argv[3] : process.argv[2] // week mode: the first day of the week
+const post = weekMode ? null : JSON.parse(await readFile(`drafts/${id}.json`, 'utf8'))
 const url = (p) => encodeURI(`${SITE_URL}/${p}`)
 const chats = [TELEGRAM_CHAT_ID, ...(process.env.TELEGRAM_EXTRA_CHAT_IDS || '').split(',')].map((s) => s.trim()).filter(Boolean) // everyone who gets the drafts
 const tg = (chat_id, method, body) =>
@@ -13,6 +14,30 @@ const tg = (chat_id, method, body) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id, ...body }),
   })
+
+if (weekMode) {
+  const { readdir } = await import('node:fs/promises')
+  const from = Date.parse(`${id}T00:00:00Z`) - 86400000
+  const items = []
+  for (const f of (await readdir('drafts')).filter((n) => n.endsWith('.json'))) {
+    const d = JSON.parse(await readFile(`drafts/${f}`, 'utf8'))
+    const t = Date.parse(d.scheduled_for)
+    if (d.status === 'draft' && t >= from && t < from + 9 * 86400000) items.push(d)
+  }
+  items.sort((a, b) => a.scheduled_for.localeCompare(b.scheduled_for) || (a.kind === 'story') - (b.kind === 'story'))
+  const day = (d) => new Date(d.scheduled_for).toLocaleDateString('es-MX', { timeZone: 'America/Ciudad_Juarez', weekday: 'long', day: 'numeric', month: 'long' })
+  const lines = items.map((d) => `• ${day(d)}: ${d.kind === 'story' ? 'Story' : 'Post'}`)
+  const summary = `📅 Semana lista: ${items.filter((d) => d.kind !== 'story').length} posts y ${items.filter((d) => d.kind === 'story').length} stories\n\n${lines.join('\n')}\n\nAbajo te llegan uno por uno. Si todo está bien, aprueba la semana completa aquí; si algo no te gusta, recházalo después.`
+  let failed = 0
+  for (const chat of chats) {
+    const r = await tg(chat, 'sendMessage', { text: summary, reply_markup: { inline_keyboard: [[{ text: '✅ Aprobar toda la semana', callback_data: `wk:${id}` }]] } })
+    if (!r.ok) {
+      failed++
+      console.error(chat, await r.text())
+    }
+  }
+  process.exit(failed === chats.length ? 1 : 0)
+}
 
 const when = post.scheduled_for
   ? new Date(post.scheduled_for).toLocaleString('es-MX', { timeZone: 'America/Ciudad_Juarez', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' })

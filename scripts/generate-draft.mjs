@@ -144,8 +144,30 @@ function buildStory(date, c) {
 // ---- run -------------------------------------------------------------------
 const start = process.env.POST_DATE || addDays(ymd(new Date()), 1)
 const planIdx = process.argv.indexOf('--plan')
+const hasDraft = (date) => live().some((d) => d.kind !== 'story' && d.scheduled_for?.slice(0, 10) === noonLocalToUtc(date).toISOString().slice(0, 10))
+const write = (d) => writeFile(`drafts/${d.id}.json`, JSON.stringify(d, null, 2) + '\n')
 
-if (planIdx > -1) {
+if (process.argv.includes('--week')) {
+  // Every post day (Tue/Thu/Sat) in the 7 days from `start`, with its Story; prints the new draft ids, one per line.
+  const hist = [...history]
+  const ids = []
+  for (let i = 0; i < 7; i++) {
+    const date = addDays(start, i)
+    if (!POST_DAYS.includes(weekdayOf(date)) || hasDraft(date)) continue
+    const c = pick(date, hist)
+    const draft = build(date, c)
+    hist.push(draft)
+    await write(draft)
+    ids.push(draft.id)
+    const story = buildStory(date, c)
+    if (story) {
+      await write(story)
+      ids.push(story.id)
+    }
+  }
+  if (!ids.length) throw new Error(`No hay días de publicación sin borrador desde ${start}`)
+  console.log(ids.join('\n'))
+} else if (planIdx > -1) {
   const n = Number(process.argv[planIdx + 1]) || 6
   const hist = [...history]
   let date = start
@@ -158,14 +180,12 @@ if (planIdx > -1) {
     shown++
   }
 } else {
-  if (live().some((d) => d.kind !== 'story' && d.scheduled_for?.slice(0, 10) === noonLocalToUtc(start).toISOString().slice(0, 10))) {
-    throw new Error(`Ya hay un borrador para el ${start}`)
-  }
+  if (hasDraft(start)) throw new Error(`Ya hay un borrador para el ${start}`)
   const c = pick(start, history)
   const draft = build(start, c)
-  await writeFile(`drafts/${draft.id}.json`, JSON.stringify(draft, null, 2) + '\n')
+  await write(draft)
   const story = buildStory(start, c)
-  if (story) await writeFile(`drafts/${story.id}.json`, JSON.stringify(story, null, 2) + '\n')
+  if (story) await write(story)
   console.log(draft.id)
 }
 

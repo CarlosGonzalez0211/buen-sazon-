@@ -22,6 +22,23 @@ async function setStatusLine(text) {
 }
 
 const save = (p) => writeFile(file, JSON.stringify(p, null, 2) + '\n')
+if (ACTION === 'approve_week') {
+  // POST_ID is the first day of the week: approve every draft still waiting from the day before it to 8 days after.
+  const { readdir } = await import('node:fs/promises')
+  const from = Date.parse(`${POST_ID}T00:00:00Z`) - 86400000
+  let n = 0
+  for (const f of (await readdir('drafts')).filter((x) => x.endsWith('.json'))) {
+    const p = JSON.parse(await readFile(`drafts/${f}`, 'utf8'))
+    const t = Date.parse(p.scheduled_for)
+    if (p.status !== 'draft' || !(t >= from && t < from + 9 * 86400000)) continue
+    p.status = 'approved'
+    await writeFile(`drafts/${f}`, JSON.stringify(p, null, 2) + '\n')
+    n++
+  }
+  await setStatusLine(n ? `✅ Semana aprobada: ${n} publicaciones (posts y stories) quedan programadas.` : 'No había nada pendiente por aprobar en esa semana.')
+  process.exit(0)
+}
+
 const post = JSON.parse(await readFile(file, 'utf8'))
 
 if (post.status === 'published' || post.status === 'rejected') {

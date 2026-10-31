@@ -5,10 +5,10 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: approve | publish_now | reject
+        description: approve | publish_now | reject | approve_week (post_id = first day of the week)
         required: true
         type: choice
-        options: [approve, publish_now, reject]
+        options: [approve, publish_now, reject, approve_week]
       post_id:
         required: true
         type: string

@@ -3,7 +3,7 @@
 // Required env: TELEGRAM_WEBHOOK_SECRET, TELEGRAM_APPROVER_IDS (comma-separated user ids),
 // TELEGRAM_BOT_TOKEN, GH_DISPATCH_TOKEN, GH_REPO (owner/name).
 
-const ACTIONS = { apv: 'approve', now: 'publish_now', rej: 'reject' }
+const ACTIONS = { apv: 'approve', now: 'publish_now', rej: 'reject', wk: 'approve_week' }
 
 async function telegram(method, body) {
   return fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/${method}`, {
