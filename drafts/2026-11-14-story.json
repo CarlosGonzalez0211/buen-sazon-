@@ -1,9 +1,13 @@
 {
   "id": "2026-11-14-story",
   "kind": "story",
-  "status": "approved",
+  "status": "published",
   "story_of": "dish-platillo-mexicano",
   "image": "social/dish-platillo-mexicano-story-v4.jpg",
   "scheduled_for": "2026-11-14T22:00:00.000Z",
-  "created_at": "2026-11-10T00:00:18.976Z"
+  "created_at": "2026-11-10T00:00:18.976Z",
+  "published_on": {
+    "instagram": "18157441606478128",
+    "facebook": "1856264495798646"
+  }
 }
