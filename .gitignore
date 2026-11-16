@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# admin database credentials
+admin/.env.local
+admin/node_modules/
