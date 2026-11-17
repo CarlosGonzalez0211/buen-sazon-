@@ -25,6 +25,12 @@ Neon Postgres (`buen-sazon-admin`) · Vercel project with root `admin/` on a sub
 ## Commands
 `npm run migrate` · `npm run seed` · `npm test` (needs `DATABASE_URL` in `.env.local`, gitignored)
 
+## Deploying
+Vercel project `buen-sazon-admin` is connected to this repo with Root Directory `admin`, so a push to `main`
+deploys it (commits tagged `[skip ci]`, like the Instagram bot's, are skipped). Live at
+https://admin.elbuensazonjrz.com. Do not run `vercel deploy` from inside `admin/` any more: with the root
+directory set it would look for `admin/admin`. Secrets live in Vercel env vars, never in the repo.
+
 ## Importing the workbook snapshot
 `npm run import:workbook -- "<path to 'all sheets' export>"` is a dry run: it parses, cross-checks against the
 workbook's own totals and lists warnings. Add `--apply` to write. Re-running is safe (rows carry a `source_key`);
