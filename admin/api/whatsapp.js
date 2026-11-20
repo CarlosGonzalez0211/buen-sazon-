@@ -52,14 +52,14 @@ export async function GET(request) {
   if (q.get('hub.mode') === 'subscribe' && q.get('hub.verify_token') === process.env.VERIFY_TOKEN && q.get('hub.challenge')) {
     return new Response(q.get('hub.challenge'));
   }
-  return new Response('Forbidden', { status: 403 });
+  return new Response('Prohibido', { status: 403 });
 }
 
 export async function POST(request) {
   const raw = await request.text();
-  if (!verifySignature(raw, request.headers.get('x-hub-signature-256'))) return new Response('Invalid signature', { status: 401 });
+  if (!verifySignature(raw, request.headers.get('x-hub-signature-256'))) return new Response('Firma inválida', { status: 401 });
   let payload;
-  try { payload = JSON.parse(raw); } catch { return new Response('Bad JSON', { status: 400 }); }
+  try { payload = JSON.parse(raw); } catch { return new Response('JSON inválido', { status: 400 }); }
 
   // Ack now (Meta retries slow responses); the photo reading continues after the response.
   for (const m of parseInbound(payload)) {

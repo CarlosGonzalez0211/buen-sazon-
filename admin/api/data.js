@@ -2,7 +2,7 @@ import { isAuthed, json } from '../lib/auth.mjs';
 import { buildReport } from '../lib/report.mjs';
 
 export async function GET(request) {
-  if (!isAuthed(request)) return json({ error: 'unauthorized' }, 401);
+  if (!isAuthed(request)) return json({ error: 'No autorizado' }, 401);
   try {
     return json(await buildReport());
   } catch (err) {
