@@ -4,7 +4,7 @@ import { neon } from '@neondatabase/serverless';
 // Workbook fixed costs (rent, payroll, utilities...) are kept apart from day-to-day purchases.
 const FIXED = `COALESCE(e.source_key, '') LIKE 'wb:fixed:%'`;
 const num = (v) => (v == null ? null : Number(v));
-const row = (r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, /^(week|month|date|name|category|supplier|dow)$/.test(k) ? v : num(v)]));
+const row = (r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, /^(week|month|date|name|category|supplier|dow|first|last)$/.test(k) ? v : num(v)]));
 
 export async function buildReport() {
   const db = neon(process.env.DATABASE_URL);
@@ -78,9 +78,23 @@ export async function buildReport() {
       SUM(amount_cents) AS total
     FROM payroll_weekly GROUP BY month ORDER BY month DESC`);
 
+  const uber = await q(`
+    SELECT to_char(date_trunc('month', order_date), 'YYYY-MM-01') AS month,
+      COUNT(*) FILTER (WHERE status = 'Completed') AS orders,
+      SUM(sales_cents) AS sales,
+      SUM(offers_cents) AS offers,
+      -SUM(marketplace_fee_cents + fee_vat_cents) AS fees,
+      -SUM(vat_withholding_cents + isr_withholding_cents) AS withheld,
+      SUM(payout_cents) AS payout
+    FROM uber_orders GROUP BY 1 ORDER BY 1 DESC`);
+  const uberItems = await q(`
+    SELECT item_name AS name, SUM(quantity) AS qty, SUM(quantity * unit_price_cents) AS cents
+    FROM uber_order_items WHERE status = 'Completed' GROUP BY 1 ORDER BY cents DESC LIMIT 8`);
+  const [uberRange] = await q(`SELECT min(order_date)::text AS first, max(order_date)::text AS last FROM uber_orders`);
+
   const [meta] = await q(`
     SELECT (SELECT max(expense_date)::text FROM expenses WHERE status = 'confirmed') AS last_expense,
            (SELECT max(created_at)::text FROM audit_log WHERE action = 'import') AS last_import`);
 
-  return { anchor, first, kpi, weekly, monthly, categories, suppliers, weekday, cashup, payroll, meta };
+  return { anchor, first, kpi, weekly, monthly, categories, suppliers, weekday, cashup, payroll, uber, uberItems, uberRange, meta };
 }

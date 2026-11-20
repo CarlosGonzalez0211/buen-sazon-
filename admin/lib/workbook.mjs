@@ -26,7 +26,7 @@ function num(s) {
   return Number.isFinite(n) ? n : null;
 }
 
-function parseCsvLine(line) {
+export function parseCsvLine(line) {
   const out = [];
   let cur = '';
   let q = false;
@@ -262,7 +262,10 @@ function parseTarjetas(sheet, meta, chain, warnings) {
       drawer_float_cents: num(row[7]) != null ? cents(num(row[7])) : null,
     });
   }
-  return { days };
+  // Monthly card fee: the sheet's own "% tarjetas" line (a formula result), when present.
+  const feeRow = rows.find((r) => strip(r[2]).trim().toLowerCase() === '% tarjetas');
+  const fee = feeRow ? num(feeRow[3]) : null;
+  return { days, fee: fee ? { month: ymd(new Date(Date.UTC(meta.year, meta.month, 1))), label: 'Comisión tarjetas', cents: cents(fee), category: 'taxes_fees' } : null };
 }
 
 export function parseWorkbook(text, { year = 2026 } = {}) {
@@ -300,7 +303,9 @@ export function parseWorkbook(text, { year = 2026 } = {}) {
       out.payroll.push(...r.payroll);
       out.summaries.push(r.summary);
     } else if (meta.kind === 'tarjetas') {
-      for (const d of parseTarjetas(sheet, meta, tarjChain, warnings).days) put(out.tarjetas, d.date, d, sheet.name);
+      const t = parseTarjetas(sheet, meta, tarjChain, warnings);
+      for (const d of t.days) put(out.tarjetas, d.date, d, sheet.name);
+      if (t.fee) out.fixed.push(t.fee);
     }
   }
   out.expenses = [...expenseKeys.values()].map((e) => ({ ...e, category: e.category ?? 'food_grocery' }));

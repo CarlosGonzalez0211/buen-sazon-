@@ -111,6 +111,18 @@
     <div class="scroll"><table id="payroll"></table></div>
   </div>
 
+  <div class="grid two" id="uberBlock" hidden>
+    <div class="card">
+      <h2>Uber Eats por mes</h2>
+      <p class="note" id="uberNote"></p>
+      <div class="scroll"><table id="uber"></table></div>
+    </div>
+    <div class="card">
+      <h2>Lo más vendido en Uber</h2>
+      <div class="scroll"><table id="uberItems"></table></div>
+    </div>
+  </div>
+
   <div class="grid two">
     <div class="card">
       <h2>Principales proveedores</h2>
@@ -215,6 +227,15 @@ function render(r) {
 
   $('payroll').innerHTML = '<tr><th>Mes</th><th>Cocinero</th><th>Ayudante</th><th>Mesero</th><th>Otros</th><th>Total</th></tr>' +
     (r.payroll || []).map((p) => `<tr><td>${p.month.slice(0, 7)}</td><td>${peso(p.cocinero)}</td><td>${peso(p.ayudante)}</td><td>${peso(p.mesero)}</td><td>${peso(p.otros)}</td><td>${peso(p.total)}</td></tr>`).join('');
+
+  if (r.uber && r.uber.length) {
+    $('uberBlock').hidden = false;
+    $('uberNote').textContent = 'Datos del ' + dia(r.uberRange.first) + ' al ' + dia(r.uberRange.last) + '. Aparte de las ventas del restaurante; todavía no se suman al neto. Comisión = tarifa de Uber con IVA.';
+    $('uber').innerHTML = '<tr><th>Mes</th><th>Pedidos</th><th>Ventas</th><th>Comisión</th><th>Retenciones</th><th>Depósito</th></tr>' +
+      r.uber.map((u) => `<tr><td>${u.month.slice(0, 7)}</td><td>${u.orders}</td><td>${peso(u.sales)}</td><td>${peso(u.fees)}</td><td>${peso(u.withheld)}</td><td>${peso(u.payout)}</td></tr>`).join('');
+    $('uberItems').innerHTML = '<tr><th>Platillo</th><th>Piezas</th><th>Ventas</th></tr>' +
+      r.uberItems.map((i) => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${peso(i.cents)}</td></tr>`).join('');
+  }
 
   $('cashNote').textContent = 'Diferencias más grandes en los últimos 90 días (cobrado vs. lo que había en caja).';
   $('cash').innerHTML = '<tr><th>Día</th><th>Diferencia</th></tr>' +

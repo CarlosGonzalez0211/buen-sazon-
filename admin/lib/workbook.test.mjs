@@ -150,3 +150,18 @@ Abril 2026,Coca Cola,Gasto,Venta,Total
   ]);
   assert.equal(r.warnings.some((w) => w.code.startsWith('payroll_')), false);
 });
+
+test('monthly card fee line becomes a fixed cost', () => {
+  const r = parseWorkbook(H('02 Tarjetas Abril 26') + `Dia,Credito,Debito,Total,Debe de haber,Hay,Falta/ sobra,Caja,Meny
+6,200,300,500,500,505,5,2000
+7,,,0
+8,,,0
+9,,,0
+10,,,0
+11,,,0
+12,,,0
+Total,200,300,500,500,505,5
+0,,% tarjetas,2679.225
+`);
+  assert.deepEqual(r.fixed.map((f) => [f.month, f.label, f.cents, f.category]), [['2026-04-01', 'Comisión tarjetas', 267923, 'taxes_fees']]);
+});

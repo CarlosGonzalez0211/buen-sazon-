@@ -36,4 +36,4 @@ directory set it would look for `admin/admin`. Secrets live in Vercel env vars, 
 workbook's own totals and lists warnings. Add `--apply` to write. Re-running is safe (rows carry a `source_key`);
 rows you void or enter by hand in the app are never overwritten. Supplier and fixed-cost category mappings live
 in `lib/workbook.mjs` (`SUPPLIER_CATEGORY`, `FIXED_CATEGORY`).
-Not imported yet: weekly payroll by role, card-fee lines (`% tarjetas`), the daily "Meny"/TE column, and the Hoja1–3 tabs.
+Not imported yet: the daily "Meny"/TE column, and the Hoja1–3 tabs.
