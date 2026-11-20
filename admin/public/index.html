@@ -7,64 +7,159 @@
 <title>El Buen Sazón · Administración</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap" rel="stylesheet">
 <script>try { document.documentElement.dataset.theme = localStorage.getItem('bs-theme') === 'dark' ? 'dark' : 'light'; } catch (e) { document.documentElement.dataset.theme = 'light'; }</script>
 <style>
+  /* Tokens. Series colors were checked with the dataviz palette validator (light: white surface, dark: card surface). */
   :root {
-    --paper: #ffffff; --card: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: rgba(0,0,0,.12);
-    --chile: #b3202f; --hoja: #1f7a42; --mostaza: #eaab1d; --cafe: #3a1d10;
+    --paper: #f6f6f4; --card: #ffffff; --ink: #1d1d1f; --ink-2: #48484d; --muted: #75757b; --line: rgba(0,0,0,.09); --line-2: rgba(0,0,0,.05);
+    --brand: #b3202f;
+    --s-sales: #1f7a42; --s-uber: #d99a12; --s-buy: #b3202f; --s-labor: #3d6fb0; --s-other: #a3a3a8;
+    --good: #1f7a42; --good-bg: rgba(31,122,66,.10); --bad: #b3202f; --bad-bg: rgba(179,32,47,.09); --warn: #9a6a00; --warn-bg: rgba(217,154,18,.14);
+    --track: rgba(0,0,0,.07);
     color-scheme: light;
   }
   :root[data-theme="dark"] {
-    --paper: #1c120c; --card: #261a12; --ink: #f4e9d6; --muted: #b9a58f; --line: rgba(244,233,214,.16);
-    --chile: #e0606c; --hoja: #5fbf85; --mostaza: #eaab1d; --cafe: #3a1d10;
+    --paper: #1c120c; --card: #261a12; --ink: #f4e9d6; --ink-2: #dccdb6; --muted: #b9a58f; --line: rgba(244,233,214,.14); --line-2: rgba(244,233,214,.07);
+    --brand: #e0606c;
+    --s-sales: #2f9566; --s-uber: #bb8612; --s-buy: #d9505d; --s-labor: #5a8bd8; --s-other: #7d6d60;
+    --good: #6fd09a; --good-bg: rgba(95,191,133,.14); --bad: #f08a94; --bad-bg: rgba(224,96,108,.16); --warn: #f0c060; --warn-bg: rgba(234,171,29,.16);
+    --track: rgba(244,233,214,.10);
     color-scheme: dark;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink);
          font: 15px/1.45 'Bricolage Grotesque', system-ui, sans-serif; -webkit-text-size-adjust: 100%; }
   [hidden] { display: none !important; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 56px; }
-  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
-  h1 { margin: 0; font-size: clamp(22px, 4vw, 32px); font-weight: 700; letter-spacing: -.02em; }
-  .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
-  button, .btn { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink);
-                 padding: 8px 14px; border-radius: 10px; }
-  button.primary { background: var(--chile); color: #fff; border-color: var(--chile); font-weight: 600; }
-  .grid { display: grid; gap: 12px; }
-  .kpis { grid-template-columns: repeat(auto-fit, minmax(125px, 1fr)); margin-bottom: 12px; }
-  .two { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); margin-top: 12px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0; }
-  .card h2 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
-  .card .note { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
-  .kpi .label { color: var(--muted); font-size: 12.5px; }
-  .kpi .value { font-size: clamp(22px, 3.2vw, 28px); font-weight: 700; letter-spacing: -.02em; margin: 2px 0; font-variant-numeric: tabular-nums; }
-  .kpi .delta { font-size: 12.5px; color: var(--muted); }
-  .up { color: var(--hoja); } .down { color: var(--chile); }
-  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
-  th, td { padding: 7px 6px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
-  th:first-child, td:first-child { text-align: left; }
-  th { color: var(--muted); font-weight: 600; font-size: 12px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px 64px; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink);
+           padding: 7px 12px; border-radius: 9px; }
+  button:hover { border-color: var(--muted); }
+  button:focus-visible, summary:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  button.primary { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 600; }
+
+  /* Top bar */
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 0 14px; }
+  .brand { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .brand b { font-size: 20px; letter-spacing: -.02em; }
+  .brand span { color: var(--muted); font-size: 13px; }
+  .top .actions { display: flex; gap: 8px; }
+  .icon { width: 36px; padding: 7px 0; text-align: center; }
+
+  /* Filter row: one row, scopes everything above the "Más detalle" sections */
+  .filters { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+             padding: 10px 0; margin-bottom: 14px; background: color-mix(in srgb, var(--paper) 88%, transparent);
+             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line-2); }
+  .seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 11px; background: var(--track); }
+  .seg button { border: 0; background: transparent; padding: 6px 14px; border-radius: 8px; color: var(--ink-2); }
+  .seg button.active { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .stepper { display: inline-flex; align-items: center; gap: 4px; }
+  .stepper button { width: 32px; padding: 5px 0; }
+  .stepper button:disabled { opacity: .3; cursor: default; }
+  #period { min-width: 150px; text-align: center; font-weight: 600; text-transform: capitalize; }
+  .cmp { color: var(--muted); font-size: 13px; }
+
+  /* Cards and grid */
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .span-12 { grid-column: span 12; } .span-7 { grid-column: span 7; } .span-5 { grid-column: span 5; }
+  .span-8 { grid-column: span 8; } .span-4 { grid-column: span 4; } .span-6 { grid-column: span 6; }
+  @media (max-width: 920px) { .span-7, .span-5, .span-8, .span-4, .span-6 { grid-column: span 12; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; min-width: 0; }
+  .card-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card h2 { margin: 0; font-size: 14.5px; font-weight: 600; }
+  .card .sub { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .eyebrow { color: var(--muted); font-size: 12.5px; font-weight: 500; }
+
+  /* Delta chip: direction arrow + text label, never color alone */
+  .chip { display: inline-flex; align-items: center; gap: 3px; font-size: 12.5px; font-weight: 600; padding: 2px 8px;
+          border-radius: 999px; background: var(--track); color: var(--ink-2); white-space: nowrap; }
+  .chip.good { background: var(--good-bg); color: var(--good); }
+  .chip.bad { background: var(--bad-bg); color: var(--bad); }
+
+  /* Hero: the one number the page leads with */
+  .hero .value { font-size: clamp(44px, 7vw, 60px); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; margin: 6px 0 8px; }
+  .hero .line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--ink-2); font-size: 13.5px; }
+  .split { margin-top: 22px; }
+  .split-bar { display: flex; gap: 2px; height: 10px; border-radius: 999px; overflow: hidden; background: var(--track); }
+  .split-bar i { display: block; height: 100%; }
+  .legend { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 7px; }
+  .legend li { display: grid; grid-template-columns: 10px 1fr auto 52px; align-items: center; gap: 10px; font-size: 13.5px; }
+  .legend .sw { width: 10px; height: 10px; border-radius: 3px; }
+  .legend .amt, .legend .shr { text-align: right; font-variant-numeric: tabular-nums; }
+  .legend .shr { color: var(--muted); }
+  .legend li.net { font-weight: 600; border-top: 1px solid var(--line); padding-top: 7px; }
+
+  /* Stat tiles */
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: 100%; }
+  .tile { display: flex; flex-direction: column; gap: 4px; }
+  .tile .value { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; letter-spacing: -.025em; line-height: 1.1; }
+  .tile .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); font-size: 12.5px; margin-top: auto; }
+  .spark { width: 100%; height: 34px; margin-top: 6px; display: block; }
+
+  /* Meter list: one ratio per row */
+  .meters { display: grid; gap: 18px; }
+  .meter-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .meter-top b { font-size: 22px; letter-spacing: -.02em; }
+  .meter-name { font-size: 13.5px; color: var(--ink-2); }
+  .meter-track { position: relative; height: 8px; border-radius: 999px; background: var(--track); margin: 7px 0 5px; overflow: hidden; }
+  .meter-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--ink-2); }
+  .meter-ref { position: absolute; top: 0; bottom: 0; background: var(--warn-bg); border-left: 1px solid var(--muted); border-right: 1px solid var(--muted); }
+  .meter-foot { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12.5px; }
+  .status { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; }
+  .status.good { color: var(--good); } .status.warn { color: var(--warn); } .status.bad { color: var(--bad); }
+
+  /* Chart / table toggle */
+  .tabs { display: inline-flex; padding: 2px; gap: 2px; border-radius: 9px; background: var(--track); }
+  .tabs button { border: 0; background: transparent; padding: 4px 10px; border-radius: 7px; font-size: 13px; color: var(--ink-2); }
+  .tabs button.active { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .chart { position: relative; height: 300px; }
+  .chart.sm { height: 220px; }
+
+  /* Tables: tabular figures only here, where numbers line up */
   .scroll { overflow-x: auto; }
-  .chart { position: relative; height: 260px; }
-  .bar { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; margin: 7px 0; font-size: 13.5px; }
-  .bar .track { grid-column: 1 / -1; height: 8px; background: var(--line); border-radius: 6px; overflow: hidden; }
-  .bar .fill { height: 100%; background: var(--chile); border-radius: 6px; }
-  .banner { background: var(--mostaza); color: #2a160b; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-weight: 600; }
-  .controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); }
-  .seg button { border: 0; border-radius: 0; background: transparent; padding: 8px 16px; }
-  .seg button.active { background: var(--chile); color: #fff; font-weight: 600; }
-  .nav { display: inline-flex; align-items: center; gap: 8px; }
-  .nav button { padding: 6px 12px; }
-  .nav button:disabled { opacity: .35; cursor: default; }
-  #period { min-width: 170px; text-align: center; font-weight: 600; }
-  tr.total td { font-weight: 700; border-top: 2px solid var(--line); }
-  footer { color: var(--muted); font-size: 12.5px; margin-top: 18px; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13.5px; }
+  th, td { padding: 9px 8px; text-align: right; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; border-bottom: 1px solid var(--line); }
+  tbody tr:hover td { background: var(--line-2); }
+  tr.total td { font-weight: 700; border-top: 1px solid var(--line); border-bottom: 0; }
+  td.pos { color: var(--good); } td.neg { color: var(--bad); }
+
+  /* Ranked bars */
+  .rank { display: grid; gap: 10px; }
+  .rank .row { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: 13.5px; }
+  .rank .row span:last-child { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .rank .bar { grid-column: 1 / -1; height: 6px; border-radius: 999px; background: var(--track); overflow: hidden; }
+  .rank .bar i { display: block; height: 100%; border-radius: 999px; background: var(--s-buy); }
+
+  /* Sections below the period view */
+  .section-h { display: flex; align-items: baseline; gap: 10px; margin: 34px 0 12px; }
+  .section-h h3 { margin: 0; font-size: 17px; letter-spacing: -.01em; }
+  .section-h span { color: var(--muted); font-size: 13px; }
+
+  details.how { margin-top: 12px; color: var(--muted); font-size: 12.5px; }
+  details.how summary { cursor: pointer; width: fit-content; }
+  details.how p { margin: 6px 0 0; line-height: 1.5; }
+
+  .banner { background: var(--warn-bg); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-weight: 600; }
+  footer { color: var(--muted); font-size: 12.5px; margin-top: 28px; }
   #login { max-width: 360px; margin: 14vh auto 0; padding: 0 16px; }
-  #login form { display: grid; gap: 10px; margin-top: 14px; }
+  #login h1 { margin: 0; font-size: 28px; letter-spacing: -.02em; }
+  #login .sub { color: var(--muted); font-size: 13px; }
+  #login form { display: grid; gap: 10px; margin-top: 16px; }
   input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
-  .err { color: var(--chile); min-height: 1.3em; font-size: 13.5px; }
+  .err { color: var(--bad); min-height: 1.3em; font-size: 13.5px; }
+
+  @media (max-width: 560px) {
+    .card { padding: 15px; border-radius: 14px; }
+    .filters { gap: 8px; padding: 8px 0; }
+    .seg { width: 100%; } .seg button { flex: 1; }
+    .stepper { width: 100%; justify-content: space-between; }
+    .cmp { display: none; }
+    #period { min-width: 0; }
+    .tiles { gap: 10px; }
+    .legend li { grid-template-columns: 10px 1fr auto 44px; }
+  }
 </style>
 </head>
 <body>
@@ -80,85 +175,111 @@
 </section>
 
 <main class="wrap" id="app" hidden>
-  <header>
-    <div>
-      <h1>El Buen Sazón · Administración</h1>
-      <div class="sub" id="coverage"></div>
+  <div class="top">
+    <div class="brand"><b>El Buen Sazón</b><span id="coverage">Administración</span></div>
+    <div class="actions">
+      <button id="theme" class="icon" type="button"></button>
+      <button id="logout" type="button">Salir</button>
     </div>
-    <div class="nav"><button id="theme" type="button" aria-label="Cambiar tema"></button><button id="logout">Salir</button></div>
-  </header>
+  </div>
 
   <div id="pending" class="banner" hidden></div>
 
-  <div class="controls">
+  <div class="filters">
     <div class="seg" role="tablist" aria-label="Periodo">
       <button type="button" data-mode="semana" role="tab">Semana</button>
       <button type="button" data-mode="mes" role="tab">Mes</button>
       <button type="button" data-mode="historico" role="tab">Histórico</button>
     </div>
-    <div class="nav" id="nav">
+    <div class="stepper" id="nav">
       <button type="button" id="prev" aria-label="Periodo anterior">‹</button>
-      <span id="period"></span>
+      <span id="period" aria-live="polite"></span>
       <button type="button" id="next" aria-label="Periodo siguiente">›</button>
     </div>
+    <span class="cmp" id="cmp"></span>
   </div>
 
-  <div class="grid kpis" id="kpis"></div>
+  <div class="grid">
+    <section class="card hero span-7" aria-labelledby="heroLabel">
+      <div class="eyebrow" id="heroLabel">Neto del periodo</div>
+      <div class="value" id="heroValue">—</div>
+      <div class="line" id="heroLine"></div>
+      <div class="split">
+        <div class="eyebrow">¿A dónde se fue cada peso que entró?</div>
+        <div class="split-bar" id="splitBar" role="img" style="margin-top:10px"></div>
+        <ul class="legend" id="splitLegend"></ul>
+      </div>
+    </section>
 
-  <div class="card">
-    <h2 id="chartTitle">Ingresos y costos</h2>
-    <p class="note" id="chartNote"></p>
-    <div class="chart"><canvas id="weeklyChart" role="img" aria-label="Ingresos y costos del periodo"></canvas></div>
+    <section class="span-5">
+      <div class="tiles" id="tiles"></div>
+    </section>
+
+    <section class="card span-4" aria-labelledby="healthTitle">
+      <div class="card-h"><div><h2 id="healthTitle">Salud de costos</h2><div class="sub">Como parte de los ingresos del periodo</div></div></div>
+      <div class="meters" id="meters"></div>
+      <details class="how"><summary>¿Cómo se calcula?</summary>
+        <p>Costo primo = compras + sueldos, dividido entre ingresos. Es la métrica que más usan los restaurantes; la referencia de la industria ronda 55–65%, pero varía según el tipo de restaurante, así que lo más útil es comparar contra tus propios meses. Las compras incluyen todo el surtido (comida, bebidas, desechables), no solo comida.</p>
+      </details>
+    </section>
+
+    <section class="card span-8" aria-labelledby="chartTitle">
+      <div class="card-h">
+        <div><h2 id="chartTitle">Ingresos y costos</h2><div class="sub" id="chartSub"></div></div>
+        <div class="tabs" role="tablist" aria-label="Vista">
+          <button type="button" data-view="chart" class="active" role="tab">Gráfica</button>
+          <button type="button" data-view="table" role="tab">Tabla</button>
+        </div>
+      </div>
+      <div id="viewChart" class="chart"><canvas id="periodChart" role="img" aria-label="Ingresos y costos del periodo"></canvas></div>
+      <div id="viewTable" class="scroll" hidden><table id="periodTable"></table></div>
+      <details class="how"><summary>¿Cómo se calcula?</summary>
+        <p>Ingresos = ventas del restaurante + Uber neto (lo que Uber paga por esas ventas, ya sin su comisión ni promociones; las retenciones de impuestos no se restan). Neto = ingresos − compras − sueldos − otros fijos (renta, servicios, impuestos, comisión de tarjeta). Los gastos fijos del mes se reparten por día y la comisión de tarjeta sigue a las ventas con tarjeta. Los sueldos van en la semana de pago del libro (semana 1 = días 1–7).</p>
+      </details>
+    </section>
   </div>
 
-  <div class="card" style="margin-top:12px">
-    <h2 id="tableTitle">Detalle</h2>
-    <p class="note">Ingresos = ventas del restaurante + Uber neto. Neto = ingresos − compras − sueldos − otros fijos y comisión de tarjeta. Los gastos fijos mensuales se reparten por día; los sueldos van en la semana de pago del libro.</p>
-    <div class="scroll"><table id="periodTable"></table></div>
-  </div>
-
-  <div class="grid two">
-    <div class="card">
-      <h2>Venta promedio por día de la semana</h2>
-      <p class="note">Últimas 12 semanas.</p>
-      <div class="chart" style="height:220px"><canvas id="dowChart" role="img" aria-label="Venta promedio por día de la semana"></canvas></div>
-    </div>
-    <div class="card">
-      <h2>En qué se va el surtido</h2>
-      <p class="note">Últimos 90 días, por categoría.</p>
-      <div id="cats"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Sueldos por puesto</h2>
-    <p class="note">Pagos semanales del libro, sumados por mes. El mes en curso está incompleto.</p>
-    <div class="scroll"><table id="payroll"></table></div>
-  </div>
-
-  <div class="grid two" id="uberBlock" hidden>
-    <div class="card">
-      <h2>Uber Eats por mes</h2>
-      <p class="note" id="uberNote"></p>
+  <div class="section-h"><h3>Ventas</h3><span>Patrones y canal Uber</span></div>
+  <div class="grid">
+    <section class="card span-6">
+      <div class="card-h"><div><h2>Venta promedio por día de la semana</h2><div class="sub">Restaurante · últimas 12 semanas</div></div></div>
+      <div class="chart sm"><canvas id="dowChart" role="img" aria-label="Venta promedio por día de la semana"></canvas></div>
+    </section>
+    <section class="card span-6" id="uberItemsCard" hidden>
+      <div class="card-h"><div><h2>Lo más vendido en Uber</h2><div class="sub">Por ventas, todo el historial</div></div></div>
+      <div class="rank" id="uberItems"></div>
+    </section>
+    <section class="card span-12" id="uberCard" hidden>
+      <div class="card-h"><div><h2>Uber Eats por mes</h2><div class="sub" id="uberSub"></div></div></div>
       <div class="scroll"><table id="uber"></table></div>
-    </div>
-    <div class="card">
-      <h2>Lo más vendido en Uber</h2>
-      <div class="scroll"><table id="uberItems"></table></div>
-    </div>
+      <details class="how"><summary>¿Qué es cada columna?</summary>
+        <p>Ventas = lo que pagó el cliente por los platillos (con IVA). Comisión = tarifa de Uber con IVA. Retenciones = ISR e IVA que Uber retiene a cuenta de tus impuestos (confírmalo con tu contadora). Depósito = lo que llega a tu cuenta. Uber no pasa por SoftRestaurant, así que se suma aparte de las ventas del restaurante.</p>
+      </details>
+    </section>
   </div>
 
-  <div class="grid two">
-    <div class="card">
-      <h2>Principales proveedores</h2>
-      <p class="note">Últimos 90 días.</p>
+  <div class="section-h"><h3>Costos</h3><span>Últimos 90 días y sueldos por mes</span></div>
+  <div class="grid">
+    <section class="card span-6">
+      <div class="card-h"><div><h2>En qué se va el surtido</h2><div class="sub">Por categoría · últimos 90 días</div></div></div>
+      <div class="rank" id="cats"></div>
+    </section>
+    <section class="card span-6">
+      <div class="card-h"><div><h2>Principales proveedores</h2><div class="sub">Últimos 90 días</div></div></div>
       <div class="scroll"><table id="suppliers"></table></div>
-    </div>
-    <div class="card">
-      <h2>Caja: faltantes y sobrantes</h2>
-      <p class="note" id="cashNote"></p>
+    </section>
+    <section class="card span-12">
+      <div class="card-h"><div><h2>Sueldos por puesto</h2><div class="sub">Pagos semanales del libro, sumados por mes · el mes en curso está incompleto</div></div></div>
+      <div class="scroll"><table id="payroll"></table></div>
+    </section>
+  </div>
+
+  <div class="section-h"><h3>Caja</h3><span>Cobrado contra lo que había en caja</span></div>
+  <div class="grid">
+    <section class="card span-12">
+      <div class="card-h"><div><h2>Diferencias más grandes</h2><div class="sub">Últimos 90 días</div></div></div>
       <div class="scroll"><table id="cash"></table></div>
-    </div>
+    </section>
   </div>
 
   <footer id="foot"></footer>
@@ -167,38 +288,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
-const peso = (c) => c == null ? '—' : (c < 0 ? '−' : '') + '$' + Math.round(Math.abs(c) / 100).toLocaleString('es-MX');
-const pct = (n) => (n * 100).toFixed(1) + '%';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const peso = (c) => c == null || !isFinite(c) ? '—' : (c < 0 ? '−' : '') + '$' + Math.round(Math.abs(c) / 100).toLocaleString('es-MX');
+const pct = (n) => n == null || !isFinite(n) ? '—' : (n * 100).toFixed(1) + '%';
+const compact = new Intl.NumberFormat('es-MX', { notation: 'compact', maximumFractionDigits: 1 });
 const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const mes = (ym) => MESES[Number(ym.slice(5, 7)) - 1] + ' ' + ym.slice(0, 4);
-const dia = (iso) => { const [y, m, d] = iso.split('-').map(Number); return d + ' ' + MESES[m - 1]; };
+const dia = (iso) => { const [, m, d] = iso.split('-').map(Number); return d + ' ' + MESES[m - 1]; };
+const range = (a, b) => (a === b ? dia(a) : a.slice(0, 7) === b.slice(0, 7) ? `${Number(a.slice(8))}–${dia(b)}` : `${dia(a)} – ${dia(b)}`);
 const DOW = ['', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-let charts = [];
+const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+let charts = {};
 
-function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-
-async function load() {
-  const res = await fetch('/api/data', { credentials: 'same-origin' });
-  if (res.status === 401) { $('app').hidden = true; $('login').hidden = false; return; }
-  if (!res.ok) { $('login').hidden = true; $('app').hidden = false; $('kpis').innerHTML = '<div class="card">No se pudo cargar el reporte. Intenta de nuevo.</div>'; return; }
-  render(await res.json());
-}
-
-function kpi(label, value, delta, tone) {
-  return `<div class="card kpi"><div class="label">${label}</div><div class="value">${value}</div><div class="delta ${tone || ''}">${delta || ''}</div></div>`;
-}
-
-// ---- period selector: everything below is computed in the browser from one row per day ----
+// ---- dates ----
 const iso = (t) => new Date(t).toISOString().slice(0, 10);
 const ms = (d) => Date.parse(d + 'T00:00:00Z');
 const addD = (d, n) => iso(ms(d) + n * 86400000);
 const monday = (d) => { const w = new Date(ms(d)).getUTCDay(); return addD(d, -((w + 6) % 7)); };
 const monthStart = (d) => d.slice(0, 7) + '-01';
 const monthEnd = (d) => iso(Date.UTC(Number(d.slice(0, 4)), Number(d.slice(5, 7)), 0));
-const MES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-let DATA = null;
-let view = { mode: 'mes', ref: null };
 
+let DATA = null;
+let RAW = null;
+let view = { mode: 'mes', ref: null, show: 'chart' };
+
+// Adds up the per-day rows the server sends (one row per calendar day, centavos).
 function agg(from, to) {
   const t = { s: 0, c: 0, x: 0, us: 0, un: 0, p: 0, l: 0, o: 0, days: 0 };
   for (const r of DATA.daily) if (r.d >= from && r.d <= to) {
@@ -209,117 +324,209 @@ function agg(from, to) {
   t.net = t.income - t.p - t.l - t.o;
   return t;
 }
+const series = (from, to, f) => DATA.daily.filter((r) => r.d >= from && r.d <= to).map(f);
 
 function periodOf(mode, ref) {
   const last = DATA.anchor;
   if (mode === 'semana') {
     const from = monday(ref); const end = addD(from, 6); const to = end > last ? last : end;
     const buckets = [];
-    for (let i = 0; i < 7; i++) {
-      const d = addD(from, i);
-      if (d <= last) buckets.push({ label: DOW[i + 1] + ' ' + Number(d.slice(8)), from: d, to: d });
-    }
-    return { from, to, full: end, label: `Semana del ${dia(from)} al ${dia(end)}`, buckets,
-      prev: { from: addD(from, -7), to: addD(from, -1) }, prevLabel: 'la semana anterior' };
+    for (let i = 0; i < 7; i++) { const d = addD(from, i); if (d <= last) buckets.push({ label: DOW[i + 1] + ' ' + Number(d.slice(8)), from: d, to: d }); }
+    return { from, to, full: end, label: `${range(from, end)}`, unit: 'por día', buckets,
+      prev: { from: addD(from, -7), to: addD(to, -7) } };
   }
   if (mode === 'mes') {
     const from = monthStart(ref); const end = monthEnd(ref); const to = end > last ? last : end;
     const buckets = []; let c = from;
     while (c <= to) {
       const wEnd = addD(monday(c), 6); const b = wEnd < to ? wEnd : to;
-      buckets.push({ label: `Sem ${buckets.length + 1} · ${Number(c.slice(8))}${b === c ? '' : '–' + Number(b.slice(8))}`, from: c, to: b });
+      buckets.push({ label: `${Number(c.slice(8))}${b === c ? '' : '–' + Number(b.slice(8))} ${MESES[Number(c.slice(5, 7)) - 1]}`, from: c, to: b });
       c = addD(b, 1);
     }
     const pFrom = monthStart(addD(from, -1)); const n = Math.round((ms(to) - ms(from)) / 86400000);
     const pEnd = monthEnd(pFrom); const pTo = addD(pFrom, n) < pEnd ? addD(pFrom, n) : pEnd;
-    return { from, to, full: end, label: `${MES_LARGO[Number(from.slice(5, 7)) - 1]} ${from.slice(0, 4)}`, buckets,
-      prev: { from: pFrom, to: pTo }, prevLabel: to < end ? 'el mes anterior (mismos días)' : 'el mes anterior' };
+    return { from, to, full: end, label: `${MES_LARGO[Number(from.slice(5, 7)) - 1]} ${from.slice(0, 4)}`, unit: 'por semana', buckets,
+      prev: { from: pFrom, to: pTo }, partial: to < end };
   }
   const first = DATA.first; const buckets = []; let c = monthStart(first);
-  while (c <= last) {
-    const e = monthEnd(c);
-    buckets.push({ label: mes(c.slice(0, 7)), from: c < first ? first : c, to: e > last ? last : e });
-    c = addD(e, 1);
-  }
-  return { from: first, to: last, full: last, label: 'Todo el historial', buckets, prev: null };
+  while (c <= last) { const e = monthEnd(c); buckets.push({ label: mes(c.slice(0, 7)), from: c < first ? first : c, to: e > last ? last : e }); c = addD(e, 1); }
+  return { from: first, to: last, full: last, label: 'Todo el historial', unit: 'por mes', buckets, prev: null };
 }
 
-function trend(cur, base, label) {
-  if (!base) return { text: '', tone: '' };
+// A change chip: arrow + percent, colored by direction × whether up is good.
+function chip(cur, base, upIsGood = true) {
+  if (base == null || !isFinite(base) || base === 0 || cur == null) return '';
   const d = (cur - base) / Math.abs(base);
-  if (!isFinite(d)) return { text: '', tone: '' };
-  return { text: `${d >= 0 ? '▲' : '▼'} ${pct(Math.abs(d))} vs ${label}`, tone: d >= 0 ? 'up' : 'down' };
+  if (!isFinite(d)) return '';
+  const up = d >= 0; const good = upIsGood ? up : !up;
+  return `<span class="chip ${Math.abs(d) < 0.005 ? '' : good ? 'good' : 'bad'}" title="Cambio contra el periodo anterior">${up ? '▲' : '▼'} ${(Math.abs(d) * 100).toFixed(1)}%</span>`;
+}
+// A change in percentage points for ratios.
+function chipPts(cur, base, lowerIsGood = true) {
+  if (base == null || cur == null || !isFinite(base) || !isFinite(cur)) return '';
+  const d = (cur - base) * 100; const up = d >= 0; const good = lowerIsGood ? !up : up;
+  return `<span class="chip ${Math.abs(d) < 0.05 ? '' : good ? 'good' : 'bad'}" title="Puntos porcentuales contra el periodo anterior">${up ? '▲' : '▼'} ${Math.abs(d).toFixed(1)} pts</span>`;
+}
+
+// Sparkline: daily values in the de-emphasis ink, last point in the series color.
+function spark(values, color) {
+  if (values.length < 2) return '';
+  const w = 200, h = 34, pad = 3;
+  const min = Math.min(...values), max = Math.max(...values), span = max - min || 1;
+  const pts = values.map((v, i) => [pad + (i * (w - 2 * pad)) / (values.length - 1), h - pad - ((v - min) / span) * (h - 2 * pad)]);
+  const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const [lx, ly] = pts.at(-1);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+    <path d="${d}" fill="none" stroke="${css('--muted')}" stroke-opacity=".55" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${lx}" cy="${ly}" r="3.2" fill="${color}" stroke="${css('--card')}" stroke-width="2"/></svg>`;
+}
+
+function tile(label, value, meta, sparkSvg) {
+  return `<div class="card tile"><div class="eyebrow">${label}</div><div class="value">${value}</div>${sparkSvg || ''}<div class="meta">${meta || ''}</div></div>`;
 }
 
 function renderPeriod() {
   const P = periodOf(view.mode, view.ref);
   const cur = agg(P.from, P.to);
   const prev = P.prev ? agg(P.prev.from, P.prev.to) : null;
-  document.querySelectorAll('.seg button').forEach((b) => b.classList.toggle('active', b.dataset.mode === view.mode));
+  const hasPrev = prev && prev.income > 0;
+
+  document.querySelectorAll('.seg button').forEach((b) => { const on = b.dataset.mode === view.mode; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
   $('nav').hidden = view.mode === 'historico';
   $('period').textContent = P.label;
   $('prev').disabled = !P.prev || P.from <= DATA.first;
   $('next').disabled = P.full >= DATA.anchor;
+  $('cmp').textContent = hasPrev ? `Comparado con ${range(P.prev.from, P.prev.to)}${P.partial ? ' (mismos días)' : ''}` : '';
 
-  const ratio = (a, b) => (b > 0 ? a / b : null);
-  const buy = ratio(cur.p, cur.income); const lab = ratio(cur.l, cur.income); const prime = ratio(cur.p + cur.l, cur.income);
-  const margin = ratio(cur.net, cur.income);
-  const pr = prev && prev.income > 0 ? { buy: prev.p / prev.income, lab: prev.l / prev.income, prime: (prev.p + prev.l) / prev.income, margin: prev.net / prev.income } : null;
-  const t1 = trend(cur.income, prev && prev.income, P.prevLabel);
-  const t2 = trend(cur.net, prev && prev.net, P.prevLabel);
+  // Hero
+  const margin = cur.income > 0 ? cur.net / cur.income : null;
+  const pMargin = hasPrev ? prev.net / prev.income : null;
+  $('heroValue').textContent = peso(cur.net);
+  $('heroLine').innerHTML = [
+    hasPrev ? chip(cur.net, prev.net) + `<span style="color:var(--muted)">vs ${range(P.prev.from, P.prev.to)}</span>` : '',
+    `<span>Margen <b>${pct(margin)}</b></span>`,
+    hasPrev ? chipPts(margin, pMargin, false) : '',
+    `<span style="color:var(--muted)">de ${peso(cur.income)} de ingresos</span>`,
+  ].filter(Boolean).join('');
+
+  // Where the money went: thin segmented bar + list carrying the figures
+  const parts = [
+    { name: 'Compras a proveedores', v: cur.p, color: css('--s-buy') },
+    { name: 'Sueldos', v: cur.l, color: css('--s-labor') },
+    { name: 'Otros fijos y comisiones', v: cur.o, color: css('--s-other') },
+  ];
+  const whole = Math.max(cur.income, cur.p + cur.l + cur.o) || 1;
+  const netPart = cur.net > 0 ? [{ name: 'Te queda (neto)', v: cur.net, color: css('--s-sales'), net: true }] : [];
+  const all = [...parts, ...netPart];
+  $('splitBar').innerHTML = all.filter((p) => p.v > 0).map((p) => `<i style="width:${(p.v / whole) * 100}%;background:${p.color}" title="${esc(p.name)}: ${peso(p.v)}"></i>`).join('');
+  $('splitBar').setAttribute('aria-label', all.map((p) => `${p.name} ${pct(p.v / whole)}`).join(', '));
+  $('splitLegend').innerHTML = all.map((p) => `<li class="${p.net ? 'net' : ''}"><span class="sw" style="background:${p.color}"></span><span>${esc(p.name)}</span><span class="amt">${peso(p.v)}</span><span class="shr">${pct(p.v / (cur.income || 1))}</span></li>`).join('')
+    + (cur.net <= 0 ? `<li class="net"><span class="sw" style="background:var(--bad)"></span><span>Faltó para cubrir costos</span><span class="amt">${peso(-cur.net)}</span><span class="shr"></span></li>` : '');
+
+  // Tiles
   const avg = cur.days ? cur.s / cur.days : null;
-  const t3 = trend(avg, prev && prev.days ? prev.s / prev.days : null, P.prevLabel);
-  const lowerBetter = (v, b) => (pr && v != null ? (v <= b ? 'up' : 'down') : '');
-  const was = (b) => (pr ? `Antes: ${pct(b)}` : '');
+  const pAvg = prev && prev.days ? prev.s / prev.days : null;
   const cardShare = cur.s ? cur.c / cur.s : null;
-  $('kpis').innerHTML =
-    kpi('Ingresos', peso(cur.income), t1.text || `Ventas ${peso(cur.s)} + Uber ${peso(cur.un)}`, t1.tone) +
-    kpi('Neto', peso(cur.net), t2.text || (margin == null ? '' : `Margen ${pct(margin)}`), t2.tone) +
-    kpi('Margen', margin == null ? '—' : pct(margin), was(pr && pr.margin), pr && margin != null ? (margin >= pr.margin ? 'up' : 'down') : '') +
-    kpi('Costo primo', prime == null ? '—' : pct(prime), `Compras + sueldos${pr ? ' · antes ' + pct(pr.prime) : ''} · ref. común 55–65%`, lowerBetter(prime, pr && pr.prime)) +
-    kpi('Compras / ingresos', buy == null ? '—' : pct(buy), was(pr && pr.buy), lowerBetter(buy, pr && pr.buy)) +
-    kpi('Sueldos / ingresos', lab == null ? '—' : pct(lab), was(pr && pr.lab), lowerBetter(lab, pr && pr.lab)) +
-    kpi('Venta diaria promedio', peso(avg), t3.text || `${cur.days} días con venta`, t3.tone) +
-    kpi('Uber neto', peso(cur.un), `Ventas Uber ${peso(cur.us)}`) +
-    kpi('Ventas con tarjeta', cardShare == null ? '—' : pct(cardShare), 'Del total del restaurante') +
-    kpi('Caja', peso(cur.x), cur.x < 0 ? 'Faltante acumulado' : 'Sobrante acumulado', cur.x < 0 ? 'down' : 'up');
+  $('tiles').innerHTML =
+    tile('Ingresos', peso(cur.income),
+      `${hasPrev ? chip(cur.income, prev.income) : ''}<span>ventas + Uber</span>`,
+      spark(series(P.from, P.to, (r) => r.s + r.un), css('--s-sales'))) +
+    tile('Venta diaria promedio', peso(avg),
+      `${pAvg ? chip(avg, pAvg) : ''}<span>${cur.days} días con venta</span>`,
+      spark(series(P.from, P.to, (r) => r.s).filter((v) => v > 0), css('--s-sales'))) +
+    tile('Uber neto', peso(cur.un),
+      `${hasPrev && prev.un ? chip(cur.un, prev.un) : ''}<span>de ${peso(cur.us)} vendidos</span>`,
+      spark(series(P.from, P.to, (r) => r.un), css('--s-uber'))) +
+    tile('Caja', peso(cur.x),
+      `<span>${cur.x < 0 ? 'Faltante' : 'Sobrante'} acumulado · ${pct(cardShare)} con tarjeta</span>`);
 
+  // Meters
+  const ratio = (a, b) => (b > 0 ? a / b : null);
+  const prime = ratio(cur.p + cur.l, cur.income), buy = ratio(cur.p, cur.income), lab = ratio(cur.l, cur.income);
+  const pPrime = hasPrev ? (prev.p + prev.l) / prev.income : null, pBuy = hasPrev ? prev.p / prev.income : null, pLab = hasPrev ? prev.l / prev.income : null;
+  const primeState = prime == null ? null : prime < 0.55 ? ['good', '✓', 'Debajo de la referencia'] : prime <= 0.65 ? ['warn', '●', 'Dentro de la referencia'] : ['bad', '!', 'Arriba de la referencia'];
+  const meter = (name, v, p, extra) => `<div>
+    <div class="meter-top"><span class="meter-name">${name}</span><b>${pct(v)}</b></div>
+    <div class="meter-track">${extra?.ref || ''}<div class="meter-fill" style="width:${Math.min(100, (v || 0) * 100)}%;${extra?.fill ? 'background:' + extra.fill : ''}"></div></div>
+    <div class="meter-foot"><span>${extra?.left || (p != null ? 'Antes ' + pct(p) : '')}</span>${hasPrev ? chipPts(v, p, true) : ''}</div></div>`;
+  $('meters').innerHTML =
+    meter('Costo primo', prime, pPrime, {
+      ref: '<div class="meter-ref" style="left:55%;width:10%" title="Referencia común 55–65%"></div>',
+      fill: primeState ? `var(--${primeState[0] === 'warn' ? 'ink-2' : primeState[0]})` : '',
+      left: primeState ? `<span class="status ${primeState[0]}">${primeState[1]} ${primeState[2]}</span>` : '',
+    }) +
+    meter('Compras / ingresos', buy, pBuy) +
+    meter('Sueldos / ingresos', lab, pLab);
+
+  // Chart + table
   const rows = P.buckets.map((b) => ({ ...b, a: agg(b.from, b.to) }));
-  const unit = view.mode === 'semana' ? 'por día' : view.mode === 'mes' ? 'por semana' : 'por mes';
-  $('chartTitle').textContent = `Ingresos y costos ${unit}`;
-  $('chartNote').textContent = 'Barras de la izquierda: ventas + Uber neto. Barras de la derecha: compras + sueldos. Línea: neto.';
-  $('tableTitle').textContent = `Detalle ${unit}`;
-
-  charts = charts.filter((c) => { if (c.canvas.id === 'weeklyChart') { c.destroy(); return false; } return true; });
-  const grid = { color: css('--line') };
-  const money = (v) => '$' + Math.round(v / 100).toLocaleString('es-MX');
-  charts.push(new Chart($('weeklyChart'), {
-    data: { labels: rows.map((r) => r.label),
-      datasets: [
-        { type: 'bar', label: 'Ventas', data: rows.map((r) => r.a.s), backgroundColor: css('--hoja'), stack: 'ing', borderRadius: 3 },
-        { type: 'bar', label: 'Uber neto', data: rows.map((r) => r.a.un), backgroundColor: css('--mostaza'), stack: 'ing', borderRadius: 3 },
-        { type: 'bar', label: 'Compras', data: rows.map((r) => r.a.p), backgroundColor: css('--chile'), stack: 'cost', borderRadius: 3 },
-        { type: 'bar', label: 'Sueldos', data: rows.map((r) => r.a.l), backgroundColor: '#a86b3c', stack: 'cost', borderRadius: 3 },
-        { type: 'line', label: 'Neto', data: rows.map((r) => r.a.net), borderColor: css('--ink'), backgroundColor: css('--ink'), tension: .25, pointRadius: 3, borderWidth: 2 }] },
-    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-      plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${money(c.parsed.y)}` } }, legend: { position: 'bottom' } },
-      scales: { y: { grid, ticks: { callback: money } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 14 } } } },
-  }));
-
+  $('chartTitle').textContent = `Ingresos y costos ${P.unit}`;
+  $('chartSub').textContent = 'Izquierda: ventas + Uber neto · derecha: compras + sueldos · línea: neto';
+  drawPeriodChart(rows);
   const line = (label, a, cls) => {
     const m = a.income > 0 ? a.net / a.income : null;
-    return `<tr class="${cls || ''}"><td>${label}</td><td>${peso(a.s)}</td><td>${peso(a.un)}</td><td>${peso(a.p)}</td><td>${peso(a.l)}</td><td>${peso(a.o)}</td>` +
-           `<td class="${a.net >= 0 ? 'up' : 'down'}"><b>${peso(a.net)}</b></td><td>${m == null ? '—' : pct(m)}</td></tr>`;
+    return `<tr class="${cls || ''}"><td>${esc(label)}</td><td>${peso(a.s)}</td><td>${peso(a.un)}</td><td>${peso(a.p)}</td><td>${peso(a.l)}</td><td>${peso(a.o)}</td>` +
+           `<td class="${a.net >= 0 ? 'pos' : 'neg'}"><b>${peso(a.net)}</b></td><td>${pct(m)}</td></tr>`;
   };
   $('periodTable').innerHTML =
-    '<tr><th>Periodo</th><th>Ventas</th><th>Uber neto</th><th>Compras</th><th>Sueldos</th><th>Otros fijos</th><th>Neto</th><th>Margen</th></tr>' +
-    rows.map((r) => line(r.label, r.a)).join('') + (rows.length > 1 ? line('Total', cur, 'total') : '');
+    '<thead><tr><th>Periodo</th><th>Ventas</th><th>Uber neto</th><th>Compras</th><th>Sueldos</th><th>Otros fijos</th><th>Neto</th><th>Margen</th></tr></thead><tbody>' +
+    rows.map((r) => line(r.label, r.a)).join('') + '</tbody>' + (rows.length > 1 ? '<tfoot>' + line('Total', cur, 'total') + '</tfoot>' : '');
+  showView(view.show);
 }
 
-function setMode(mode) {
-  view = { mode, ref: mode === 'historico' ? DATA.anchor : (view.ref || DATA.anchor) };
-  renderPeriod();
+const money = (v) => '$' + Math.round(v / 100).toLocaleString('es-MX');
+const axisMoney = (v) => (Math.abs(v) >= 1000000 ? '$' + compact.format(v / 100) : '$' + Math.round(v / 100).toLocaleString('es-MX'));
+
+function chartBase() {
+  Chart.defaults.font.family = "'Bricolage Grotesque', system-ui, sans-serif";
+  Chart.defaults.font.size = 12;
+  Chart.defaults.color = css('--muted');
+  return {
+    grid: { color: css('--line-2'), drawTicks: false },
+    tooltip: {
+      backgroundColor: css('--card'), titleColor: css('--muted'), bodyColor: css('--ink'), borderColor: css('--line'), borderWidth: 1,
+      padding: 10, cornerRadius: 10, boxPadding: 4, usePointStyle: true, bodyFont: { weight: '600' },
+      callbacks: { label: (c) => ` ${money(c.parsed.y)}  ${c.dataset.label}` },
+    },
+  };
 }
+
+function drawPeriodChart(rows) {
+  charts.period?.destroy();
+  const { grid, tooltip } = chartBase();
+  const surface = css('--card');
+  const seg = (label, key, color, stack, top) => ({
+    type: 'bar', label, data: rows.map((r) => r.a[key]), backgroundColor: color, stack,
+    maxBarThickness: 24, borderSkipped: 'start',
+    borderRadius: top ? { topLeft: 4, topRight: 4 } : 0,
+    borderColor: surface, borderWidth: top ? 0 : { top: 2 }, pointStyle: 'rect',
+  });
+  charts.period = new Chart($('periodChart'), {
+    data: { labels: rows.map((r) => r.label),
+      datasets: [
+        seg('Ventas', 's', css('--s-sales'), 'ing', false),
+        seg('Uber neto', 'un', css('--s-uber'), 'ing', true),
+        seg('Compras', 'p', css('--s-buy'), 'cost', false),
+        seg('Sueldos', 'l', css('--s-labor'), 'cost', true),
+        { type: 'line', label: 'Neto', data: rows.map((r) => r.a.net), borderColor: css('--ink'), backgroundColor: css('--ink'),
+          borderWidth: 2, tension: .3, pointRadius: 4, pointHoverRadius: 5, pointBorderColor: surface, pointBorderWidth: 2, pointStyle: 'circle' },
+      ] },
+    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      plugins: { tooltip, legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 10, boxHeight: 10, padding: 16, color: css('--ink-2') } } },
+      scales: {
+        y: { grid, border: { display: false }, ticks: { callback: axisMoney, padding: 8, maxTicksLimit: 6 } },
+        x: { grid: { display: false }, border: { color: css('--line') }, ticks: { maxRotation: 0, autoSkipPadding: 12, padding: 6 } } } },
+  });
+}
+
+function showView(which) {
+  view.show = which;
+  $('viewChart').hidden = which !== 'chart';
+  $('viewTable').hidden = which !== 'table';
+  document.querySelectorAll('.tabs button').forEach((b) => { const on = b.dataset.view === which; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
+}
+
+function setMode(mode) { view.mode = mode; view.ref = mode === 'historico' ? DATA.anchor : (view.ref || DATA.anchor); renderPeriod(); }
 function shift(dir) {
   const P = periodOf(view.mode, view.ref);
   view.ref = view.mode === 'semana' ? addD(P.from, dir * 7) : addD(dir < 0 ? P.from : P.full, dir);
@@ -328,60 +535,70 @@ function shift(dir) {
   renderPeriod();
 }
 document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => showView(b.dataset.view)));
 $('prev').addEventListener('click', () => shift(-1));
 $('next').addEventListener('click', () => shift(1));
+document.addEventListener('keydown', (e) => {
+  if (!DATA || e.target.closest('input, textarea')) return;
+  if (e.key === 'ArrowLeft' && !$('prev').disabled && !$('nav').hidden) shift(-1);
+  if (e.key === 'ArrowRight' && !$('next').disabled && !$('nav').hidden) shift(1);
+});
 
-let RAW = null;
+function renderRest(r) {
+  const { grid, tooltip } = chartBase();
+  charts.dow?.destroy();
+  charts.dow = new Chart($('dowChart'), {
+    type: 'bar',
+    data: { labels: r.weekday.map((d) => DOW[d.dow]), datasets: [{ label: 'Venta promedio', data: r.weekday.map((d) => d.avg), backgroundColor: css('--s-sales'), maxBarThickness: 24, borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: 'start' }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip },
+      scales: { y: { grid, border: { display: false }, ticks: { callback: axisMoney, padding: 8, maxTicksLimit: 5 } }, x: { grid: { display: false }, border: { color: css('--line') } } } },
+  });
+
+  const rank = (items, name, value, color) => {
+    const max = Math.max(...items.map(value), 1);
+    return items.map((i) => `<div class="row"><span>${esc(name(i))}</span><span>${peso(value(i))}</span><div class="bar"><i style="width:${(value(i) / max) * 100}%${color ? ';background:' + color : ''}"></i></div></div>`).join('');
+  };
+  const totCat = r.categories.reduce((a, c) => a + c.cents, 0) || 1;
+  $('cats').innerHTML = rank(r.categories, (c) => `${c.name} · ${pct(c.cents / totCat)}`, (c) => c.cents);
+
+  $('suppliers').innerHTML = '<thead><tr><th>Proveedor</th><th>Total</th><th>Compras</th></tr></thead><tbody>' +
+    r.suppliers.map((s) => `<tr><td>${esc(s.supplier)}</td><td>${peso(s.cents)}</td><td>${s.n}</td></tr>`).join('') + '</tbody>';
+
+  $('payroll').innerHTML = '<thead><tr><th>Mes</th><th>Cocinero</th><th>Ayudante</th><th>Mesero</th><th>Otros</th><th>Total</th></tr></thead><tbody>' +
+    (r.payroll || []).map((p) => `<tr><td>${mes(p.month.slice(0, 7))}</td><td>${peso(p.cocinero)}</td><td>${peso(p.ayudante)}</td><td>${peso(p.mesero)}</td><td>${peso(p.otros)}</td><td><b>${peso(p.total)}</b></td></tr>`).join('') + '</tbody>';
+
+  if (r.uber && r.uber.length) {
+    $('uberCard').hidden = false; $('uberItemsCard').hidden = false;
+    $('uberSub').textContent = `Datos del ${dia(r.uberRange.first)} al ${dia(r.uberRange.last)}`;
+    $('uber').innerHTML = '<thead><tr><th>Mes</th><th>Pedidos</th><th>Ventas</th><th>Comisión</th><th>Retenciones</th><th>Depósito</th><th>% que llega</th></tr></thead><tbody>' +
+      r.uber.map((u) => `<tr><td>${mes(u.month.slice(0, 7))}</td><td>${u.orders}</td><td>${peso(u.sales)}</td><td>${peso(u.fees)}</td><td>${peso(u.withheld)}</td><td><b>${peso(u.payout)}</b></td><td>${pct(u.sales ? u.payout / u.sales : null)}</td></tr>`).join('') + '</tbody>';
+    $('uberItems').innerHTML = rank(r.uberItems, (i) => `${i.name} · ${i.qty} pzas`, (i) => i.cents, css('--s-uber'));
+  }
+
+  $('cash').innerHTML = '<thead><tr><th>Día</th><th>Diferencia</th></tr></thead><tbody>' +
+    r.cashup.map((c) => `<tr><td>${dia(c.date)}</td><td class="${c.cents < 0 ? 'neg' : 'pos'}">${c.cents < 0 ? '▼ ' : '▲ '}${peso(c.cents)}</td></tr>`).join('') + '</tbody>';
+
+  $('foot').textContent = 'Fuente: libro de Drive' + (r.meta.last_import ? ` (importado el ${dia(r.meta.last_import.slice(0, 10))})` : '') +
+    ', reportes de Uber Eats y tickets confirmados por WhatsApp. Todas las cifras salen de datos confirmados.';
+}
+
 function render(r, keepView) {
   RAW = r;
   $('login').hidden = true; $('app').hidden = false;
-  if (r.empty) { $('kpis').innerHTML = '<div class="card">Todavía no hay datos.</div>'; return; }
+  if (r.empty) { $('heroValue').textContent = 'Todavía no hay datos.'; return; }
   DATA = r;
-  $('coverage').textContent = `Datos del ${dia(r.first)} al ${dia(r.anchor)} · ${r.anchor.slice(0, 4)}`;
+  $('coverage').textContent = `Administración · datos al ${dia(r.anchor)} ${r.anchor.slice(0, 4)}`;
   if (r.pending > 0) { $('pending').hidden = false; $('pending').textContent = `${r.pending} ticket(s) esperando confirmación en WhatsApp.`; }
-  if (!keepView) view = { mode: 'mes', ref: r.anchor };
-
-  charts.forEach((c) => c.destroy()); charts = [];
-  Chart.defaults.font.family = "'Bricolage Grotesque', system-ui, sans-serif";
-  Chart.defaults.color = css('--muted');
-  const grid = { color: css('--line') };
-  const money = (v) => '$' + Math.round(v / 100).toLocaleString('es-MX');
-
-  charts.push(new Chart($('dowChart'), {
-    type: 'bar',
-    data: { labels: r.weekday.map((d) => DOW[d.dow]), datasets: [{ label: 'Venta promedio', data: r.weekday.map((d) => d.avg), backgroundColor: css('--mostaza'), borderRadius: 4 }] },
-    options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => money(c.parsed.y) } } },
-      scales: { y: { grid, ticks: { callback: money } }, x: { grid: { display: false } } } },
-  }));
-
+  if (!keepView) view = { mode: 'mes', ref: r.anchor, show: 'chart' };
   renderPeriod();
+  renderRest(r);
+}
 
-  const maxCat = Math.max(...r.categories.map((c) => c.cents), 1);
-  const totCat = r.categories.reduce((a, c) => a + c.cents, 0) || 1;
-  $('cats').innerHTML = r.categories.map((c) =>
-    `<div class="bar"><span>${c.name}</span><span>${peso(c.cents)} · ${pct(c.cents / totCat)}</span><div class="track"><div class="fill" style="width:${(c.cents / maxCat) * 100}%"></div></div></div>`).join('');
-
-  $('suppliers').innerHTML = '<tr><th>Proveedor</th><th>Total</th><th>Compras</th></tr>' +
-    r.suppliers.map((s) => `<tr><td>${s.supplier}</td><td>${peso(s.cents)}</td><td>${s.n}</td></tr>`).join('');
-
-  $('payroll').innerHTML = '<tr><th>Mes</th><th>Cocinero</th><th>Ayudante</th><th>Mesero</th><th>Otros</th><th>Total</th></tr>' +
-    (r.payroll || []).map((p) => `<tr><td>${p.month.slice(0, 7)}</td><td>${peso(p.cocinero)}</td><td>${peso(p.ayudante)}</td><td>${peso(p.mesero)}</td><td>${peso(p.otros)}</td><td>${peso(p.total)}</td></tr>`).join('');
-
-  if (r.uber && r.uber.length) {
-    $('uberBlock').hidden = false;
-    $('uberNote').textContent = 'Datos del ' + dia(r.uberRange.first) + ' al ' + dia(r.uberRange.last) + '. Aparte de las ventas del restaurante (no pasan por SoftRestaurant). El neto mensual suma «Uber neto» = lo que Uber paga por esas ventas (ya sin comisión ni promociones). Las retenciones de impuestos no se restan como gasto; confírmalo con tu contadora. Comisión = tarifa de Uber con IVA.';
-    $('uber').innerHTML = '<tr><th>Mes</th><th>Pedidos</th><th>Ventas</th><th>Comisión</th><th>Retenciones</th><th>Depósito</th></tr>' +
-      r.uber.map((u) => `<tr><td>${u.month.slice(0, 7)}</td><td>${u.orders}</td><td>${peso(u.sales)}</td><td>${peso(u.fees)}</td><td>${peso(u.withheld)}</td><td>${peso(u.payout)}</td></tr>`).join('');
-    $('uberItems').innerHTML = '<tr><th>Platillo</th><th>Piezas</th><th>Ventas</th></tr>' +
-      r.uberItems.map((i) => `<tr><td>${i.name}</td><td>${i.qty}</td><td>${peso(i.cents)}</td></tr>`).join('');
-  }
-
-  $('cashNote').textContent = 'Diferencias más grandes en los últimos 90 días (cobrado vs. lo que había en caja).';
-  $('cash').innerHTML = '<tr><th>Día</th><th>Diferencia</th></tr>' +
-    r.cashup.map((c) => `<tr><td>${dia(c.date)}</td><td class="${c.cents < 0 ? 'down' : 'up'}">${peso(c.cents)}</td></tr>`).join('');
-
-  $('foot').textContent = 'Fuente: libro de Drive (importado' + (r.meta.last_import ? ' el ' + dia(r.meta.last_import.slice(0, 10)) : '') +
-    ') y tickets confirmados por WhatsApp. Todas las cifras salen de datos confirmados.';
+async function load() {
+  const res = await fetch('/api/data', { credentials: 'same-origin' });
+  if (res.status === 401) { $('app').hidden = true; $('login').hidden = false; return; }
+  if (!res.ok) { $('login').hidden = true; $('app').hidden = false; $('heroValue').textContent = 'No se pudo cargar el reporte.'; return; }
+  render(await res.json());
 }
 
 $('loginForm').addEventListener('submit', async (e) => {
@@ -390,7 +607,12 @@ $('loginForm').addEventListener('submit', async (e) => {
   const res = await fetch('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: $('pw').value }) });
   if (res.ok) { $('pw').value = ''; load(); } else { $('loginErr').textContent = 'Contraseña incorrecta'; }
 });
-const paintThemeBtn = () => { $('theme').textContent = document.documentElement.dataset.theme === 'dark' ? '☀ Claro' : '☾ Oscuro'; };
+const paintThemeBtn = () => {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  $('theme').textContent = dark ? '☀' : '☾';
+  $('theme').setAttribute('aria-label', dark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro');
+  $('theme').title = dark ? 'Tema claro' : 'Tema oscuro';
+};
 paintThemeBtn();
 $('theme').addEventListener('click', () => {
   const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
