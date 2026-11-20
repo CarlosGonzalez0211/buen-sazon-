@@ -124,3 +124,29 @@ test('a week the sheet ends in the middle of starts the day after the last full 
   const r = parseWorkbook(text);
   assert.ok(r.sales.some((x) => x.date === '2026-04-13' && x.credit_cents === 1000));
 });
+
+test('weekly payroll by role is parsed and tied to the Sueldos line', () => {
+  const sheet = H('01 Abril 2026') + `GASTOS,,,,Gastos sueldos,,,,Total mes
+,,,,,,1er,2a
+Agua,1000,,,Cocinero,,3000,3100
+Renta,2000,,,Mesero,,2000,2200
+Sueldos,10300,,,Otros sueldos,,0,0
+,,,,,,5000,5300,10300,999
+,3000
+Abril 2026,Coca Cola,Gasto,Venta,Total
+6,100,100,1000,900
+7,,,,
+8,,,,
+9,,,,
+10,,,,
+11,,,,
+12,,,,
+,,100,1000,900
+,,Total mes Abril,100,1000,900
+`;
+  const r = parseWorkbook(sheet);
+  assert.deepEqual(r.payroll.map((p) => [p.week_no, p.role, p.cents]), [
+    [1, 'Cocinero', 300000], [2, 'Cocinero', 310000], [1, 'Mesero', 200000], [2, 'Mesero', 220000],
+  ]);
+  assert.equal(r.warnings.some((w) => w.code.startsWith('payroll_')), false);
+});

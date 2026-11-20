@@ -152,6 +152,36 @@ function parseMonthly(sheet, meta, chain, warnings) {
     if (v) fixed.push({ label, cents: cents(v) });
   }
 
+  // Weekly payroll by role: "Cocinero/Ayudante/Mesero/Otros sueldos" in column E, one value per pay week.
+  const ROLES = { cocinero: 'Cocinero', ayudante: 'Ayudante', mesero: 'Mesero', 'otros sueldos': 'Otros sueldos' };
+  const payroll = [];
+  const weekHeader = rows.slice(0, hi).find((r) => /^1er/i.test((r[6] ?? '').trim()));
+  const monthStartStr = ymd(new Date(Date.UTC(meta.year, meta.month, 1)));
+  let payrollTotal = null;
+  for (let i = gi + 1; i < hi; i++) {
+    const role = ROLES[strip(rows[i][4]).trim().toLowerCase()];
+    if (role) {
+      for (let c = 6; c < 11; c++) {
+        const hdr = (weekHeader?.[c] ?? '').trim();
+        const v = num(rows[i][c]);
+        if (hdr && v) payroll.push({ month: monthStartStr, week_no: c - 5, role, cents: cents(v) });
+      }
+    } else if (!(rows[i][4] ?? '').trim() && num(rows[i][6]) != null && payroll.length) {
+      // totals row: the weekly sums, then the month total as the last number
+      const weekCount = (weekHeader ?? []).slice(6, 11).filter((c) => (c ?? '').trim()).length;
+      payrollTotal = num(rows[i][6 + weekCount]);
+      break;
+    }
+  }
+  const payrollSum = payroll.reduce((a, p) => a + p.cents, 0);
+  if (payrollTotal != null && Math.abs(cents(payrollTotal) - payrollSum) > 100) {
+    warnings.push({ sheet: sheet.name, code: 'payroll_total_mismatch', reported: cents(payrollTotal), summed: payrollSum });
+  }
+  const sueldos = fixed.find((f) => strip(f.label).trim().toLowerCase() === 'sueldos');
+  if (sueldos && payroll.length && Math.abs(sueldos.cents - payrollSum) > 100) {
+    warnings.push({ sheet: sheet.name, code: 'payroll_vs_sueldos', sueldos: sueldos.cents, summed: payrollSum });
+  }
+
   // Daily grid: weeks end at a row with no day label (the weekly totals row).
   const blocks = [];
   let cur = [];
@@ -196,7 +226,7 @@ function parseMonthly(sheet, meta, chain, warnings) {
   if (reported?.venta != null && Math.abs(cents(reported.venta) - venta) > 100) {
     warnings.push({ sheet: sheet.name, code: 'sales_total_mismatch', reported: cents(reported.venta), summed: venta });
   }
-  return { expenses, sales, fixed: fixedRows, summary: { sheet: sheet.name, purchases, venta, fixed: fixedSum } };
+  return { expenses, sales, fixed: fixedRows, payroll, summary: { sheet: sheet.name, purchases, venta, fixed: fixedSum } };
 }
 
 function parseTarjetas(sheet, meta, chain, warnings) {
@@ -239,7 +269,7 @@ export function parseWorkbook(text, { year = 2026 } = {}) {
   const warnings = [];
   const monthlyChain = { lastSunday: null };
   const tarjChain = { lastSunday: null };
-  const out = { expenses: [], fixed: [], sales: new Map(), tarjetas: new Map(), summaries: [], warnings, unmapped: new Set() };
+  const out = { expenses: [], fixed: [], payroll: [], sales: new Map(), tarjetas: new Map(), summaries: [], warnings, unmapped: new Set() };
 
   const put = (map, key, val, sheet) => {
     if (map.has(key) && JSON.stringify(map.get(key).val) !== JSON.stringify(val)) {
@@ -267,6 +297,7 @@ export function parseWorkbook(text, { year = 2026 } = {}) {
         if (!cat) out.unmapped.add('fixed:' + f.label);
         out.fixed.push({ ...f, category: cat ?? 'other' });
       }
+      out.payroll.push(...r.payroll);
       out.summaries.push(r.summary);
     } else if (meta.kind === 'tarjetas') {
       for (const d of parseTarjetas(sheet, meta, tarjChain, warnings).days) put(out.tarjetas, d.date, d, sheet.name);

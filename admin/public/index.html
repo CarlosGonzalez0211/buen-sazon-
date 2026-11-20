@@ -105,6 +105,12 @@
     </div>
   </div>
 
+  <div class="card">
+    <h2>Sueldos por puesto</h2>
+    <p class="note">Pagos semanales del libro, sumados por mes. El mes en curso está incompleto.</p>
+    <div class="scroll"><table id="payroll"></table></div>
+  </div>
+
   <div class="grid two">
     <div class="card">
       <h2>Principales proveedores</h2>
@@ -206,6 +212,9 @@ function render(r) {
 
   $('suppliers').innerHTML = '<tr><th>Proveedor</th><th>Total</th><th>Compras</th></tr>' +
     r.suppliers.map((s) => `<tr><td>${s.supplier}</td><td>${peso(s.cents)}</td><td>${s.n}</td></tr>`).join('');
+
+  $('payroll').innerHTML = '<tr><th>Mes</th><th>Cocinero</th><th>Ayudante</th><th>Mesero</th><th>Otros</th><th>Total</th></tr>' +
+    (r.payroll || []).map((p) => `<tr><td>${p.month.slice(0, 7)}</td><td>${peso(p.cocinero)}</td><td>${peso(p.ayudante)}</td><td>${peso(p.mesero)}</td><td>${peso(p.otros)}</td><td>${peso(p.total)}</td></tr>`).join('');
 
   $('cashNote').textContent = 'Diferencias más grandes en los últimos 90 días (cobrado vs. lo que había en caja).';
   $('cash').innerHTML = '<tr><th>Día</th><th>Diferencia</th></tr>' +

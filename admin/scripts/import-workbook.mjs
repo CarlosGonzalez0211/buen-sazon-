@@ -26,6 +26,7 @@ console.log('\nPer sheet (purchases / sales / fixed costs):');
 for (const s of r.summaries) console.log(`  ${s.sheet.padEnd(16)} ${peso(s.purchases).padStart(10)} ${peso(s.venta).padStart(10)} ${peso(s.fixed).padStart(10)}`);
 const dates = r.sales.map((s) => s.date);
 console.log(`\n${r.expenses.length} supplier purchases, ${r.fixed.length} fixed-cost lines, ${r.sales.length} sales days (${dates[0]} .. ${dates.at(-1)})`);
+console.log(`${r.payroll.length} weekly payroll lines`);
 console.log(`${r.sales.filter((s) => s.credit_cents != null).length} of those days have cash-up detail`);
 if (r.unmapped.length) console.log('\nUnmapped names (filed under a default category):', r.unmapped.join(', '));
 
@@ -101,7 +102,21 @@ for (const part of chunks(r.sales)) {
   for (const row of res) row.inserted ? salesIn++ : salesUp++;
 }
 
+let payIn = 0;
+let payUp = 0;
+const payRows = r.payroll.map((p) => ({ month: p.month, week_no: p.week_no, role: p.role, amount_cents: p.cents,
+  source_key: `wb:payroll:${p.month.slice(0, 7)}:w${p.week_no}:${p.role.toLowerCase().replace(/\s+/g, '-')}` }));
+for (const part of chunks(payRows)) {
+  const res = await sql.query(
+    `INSERT INTO payroll_weekly (month, week_no, role, amount_cents, source_key)
+     SELECT x.month, x.week_no, x.role, x.amount_cents, x.source_key
+     FROM jsonb_to_recordset($1::jsonb) AS x(month date, week_no int, role text, amount_cents bigint, source_key text)
+     ON CONFLICT (source_key) DO UPDATE SET amount_cents = EXCLUDED.amount_cents
+     RETURNING (xmax = 0) AS inserted`, [JSON.stringify(part)]);
+  for (const row of res) row.inserted ? payIn++ : payUp++;
+}
+
 await sql.query(`INSERT INTO audit_log (user_id, action, entity, detail) VALUES ($1, 'import', 'workbook', $2)`,
-  [user.id, JSON.stringify({ file, expenses: { inserted, updated }, sales: { inserted: salesIn, updated: salesUp }, warnings: r.warnings.length })]);
+  [user.id, JSON.stringify({ file, expenses: { inserted, updated }, sales: { inserted: salesIn, updated: salesUp }, payroll: { inserted: payIn, updated: payUp }, warnings: r.warnings.length })]);
 console.log(`\nApplied. Expenses: ${inserted} new, ${updated} updated. Sales days: ${salesIn} new, ${salesUp} updated.`);
 console.log(`(${expenseRows.length - inserted - updated} expense rows left alone because they were voided or edited.)`);

@@ -69,9 +69,18 @@ export async function buildReport() {
     WHERE status = 'confirmed' AND over_short_cents IS NOT NULL AND sale_date > $1::date - 90 AND sale_date <= $1::date
     ORDER BY abs(over_short_cents) DESC LIMIT 5`, [anchor]);
 
+  const payroll = await q(`
+    SELECT to_char(month, 'YYYY-MM-01') AS month,
+      SUM(amount_cents) FILTER (WHERE role = 'Cocinero') AS cocinero,
+      SUM(amount_cents) FILTER (WHERE role = 'Ayudante') AS ayudante,
+      SUM(amount_cents) FILTER (WHERE role = 'Mesero') AS mesero,
+      SUM(amount_cents) FILTER (WHERE role = 'Otros sueldos') AS otros,
+      SUM(amount_cents) AS total
+    FROM payroll_weekly GROUP BY month ORDER BY month DESC`);
+
   const [meta] = await q(`
     SELECT (SELECT max(expense_date)::text FROM expenses WHERE status = 'confirmed') AS last_expense,
            (SELECT max(created_at)::text FROM audit_log WHERE action = 'import') AS last_import`);
 
-  return { anchor, first, kpi, weekly, monthly, categories, suppliers, weekday, cashup, meta };
+  return { anchor, first, kpi, weekly, monthly, categories, suppliers, weekday, cashup, payroll, meta };
 }

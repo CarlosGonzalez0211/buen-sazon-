@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "migrate": "node scripts/run-sql.mjs migrations/001_core.sql && node scripts/run-sql.mjs migrations/002_receipt_images.sql && node scripts/run-sql.mjs migrations/003_processed_messages.sql && node scripts/run-sql.mjs migrations/004_workbook_import.sql",
+    "migrate": "node scripts/run-sql.mjs migrations/001_core.sql && node scripts/run-sql.mjs migrations/002_receipt_images.sql && node scripts/run-sql.mjs migrations/003_processed_messages.sql && node scripts/run-sql.mjs migrations/004_workbook_import.sql && node scripts/run-sql.mjs migrations/005_payroll_weekly.sql",
     "seed": "node scripts/run-sql.mjs seed.sql",
     "test": "node --test lib/validate.test.mjs lib/whatsapp.test.mjs lib/workbook.test.mjs",
     "import:workbook": "node scripts/import-workbook.mjs"
