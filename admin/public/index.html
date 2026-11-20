@@ -8,14 +8,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap" rel="stylesheet">
+<script>try { document.documentElement.dataset.theme = localStorage.getItem('bs-theme') === 'dark' ? 'dark' : 'light'; } catch (e) { document.documentElement.dataset.theme = 'light'; }</script>
 <style>
   :root {
-    --paper: #f7efdf; --card: #fffaf0; --ink: #2a160b; --muted: #6d5444; --line: rgba(42,22,11,.14);
-    --chile: #9a1a28; --hoja: #1f6a3a; --mostaza: #eaab1d; --cafe: #3a1d10;
+    --paper: #ffffff; --card: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: rgba(0,0,0,.12);
+    --chile: #b3202f; --hoja: #1f7a42; --mostaza: #eaab1d; --cafe: #3a1d10;
+    color-scheme: light;
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper: #1c120c; --card: #261a12; --ink: #f4e9d6; --muted: #b9a58f; --line: rgba(244,233,214,.16);
-            --chile: #e0606c; --hoja: #5fbf85; --mostaza: #eaab1d; --cafe: #3a1d10; }
+  :root[data-theme="dark"] {
+    --paper: #1c120c; --card: #261a12; --ink: #f4e9d6; --muted: #b9a58f; --line: rgba(244,233,214,.16);
+    --chile: #e0606c; --hoja: #5fbf85; --mostaza: #eaab1d; --cafe: #3a1d10;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink);
@@ -82,7 +85,7 @@
       <h1>El Buen Sazón · Administración</h1>
       <div class="sub" id="coverage"></div>
     </div>
-    <button id="logout">Salir</button>
+    <div class="nav"><button id="theme" type="button" aria-label="Cambiar tema"></button><button id="logout">Salir</button></div>
   </header>
 
   <div id="pending" class="banner" hidden></div>
@@ -328,13 +331,15 @@ document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('clic
 $('prev').addEventListener('click', () => shift(-1));
 $('next').addEventListener('click', () => shift(1));
 
-function render(r) {
+let RAW = null;
+function render(r, keepView) {
+  RAW = r;
   $('login').hidden = true; $('app').hidden = false;
   if (r.empty) { $('kpis').innerHTML = '<div class="card">Todavía no hay datos.</div>'; return; }
   DATA = r;
   $('coverage').textContent = `Datos del ${dia(r.first)} al ${dia(r.anchor)} · ${r.anchor.slice(0, 4)}`;
   if (r.pending > 0) { $('pending').hidden = false; $('pending').textContent = `${r.pending} ticket(s) esperando confirmación en WhatsApp.`; }
-  view = { mode: 'mes', ref: r.anchor };
+  if (!keepView) view = { mode: 'mes', ref: r.anchor };
 
   charts.forEach((c) => c.destroy()); charts = [];
   Chart.defaults.font.family = "'Bricolage Grotesque', system-ui, sans-serif";
@@ -384,6 +389,15 @@ $('loginForm').addEventListener('submit', async (e) => {
   $('loginErr').textContent = '';
   const res = await fetch('/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: $('pw').value }) });
   if (res.ok) { $('pw').value = ''; load(); } else { $('loginErr').textContent = 'Contraseña incorrecta'; }
+});
+const paintThemeBtn = () => { $('theme').textContent = document.documentElement.dataset.theme === 'dark' ? '☀ Claro' : '☾ Oscuro'; };
+paintThemeBtn();
+$('theme').addEventListener('click', () => {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('bs-theme', next); } catch (e) { /* private mode: keep for this visit only */ }
+  paintThemeBtn();
+  if (RAW && !RAW.empty) render(RAW, true);
 });
 $('logout').addEventListener('click', async () => { await fetch('/api/login', { method: 'DELETE' }); location.reload(); });
 load();
