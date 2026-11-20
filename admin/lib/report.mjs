@@ -17,37 +17,8 @@ export async function buildReport() {
     `SELECT max(sale_date)::text d, min(sale_date)::text first FROM sales_daily WHERE status = 'confirmed'`);
   if (!anchor) return { empty: true };
 
-  const [kpi] = await q(`
-    SELECT
-      (SELECT COALESCE(SUM(gross_cents), 0) FROM sales_daily WHERE status = 'confirmed' AND sale_date > $1::date - 30 AND sale_date <= $1::date) AS sales30,
-      (SELECT COALESCE(SUM(gross_cents), 0) FROM sales_daily WHERE status = 'confirmed' AND sale_date > $1::date - 60 AND sale_date <= $1::date - 30) AS sales_prev30,
-      (SELECT COUNT(*) FROM sales_daily WHERE status = 'confirmed' AND sale_date > $1::date - 30 AND sale_date <= $1::date) AS days30,
-      (SELECT COALESCE(SUM(e.total_cents), 0) FROM expenses e WHERE e.status = 'confirmed' AND NOT ${FIXED} AND e.expense_date > $1::date - 30 AND e.expense_date <= $1::date) AS purchases30,
-      (SELECT COALESCE(SUM(e.total_cents), 0) FROM expenses e WHERE e.status = 'confirmed' AND NOT ${FIXED} AND e.expense_date > $1::date - 60 AND e.expense_date <= $1::date - 30) AS purchases_prev30,
-      (SELECT SUM(card_cents)::float8 / NULLIF(SUM(gross_cents) FILTER (WHERE card_cents IS NOT NULL), 0) FROM sales_daily WHERE status = 'confirmed' AND sale_date > $1::date - 30 AND sale_date <= $1::date) AS card_share,
-      (SELECT COALESCE(SUM(over_short_cents), 0) FROM sales_daily WHERE status = 'confirmed' AND sale_date > $1::date - 30 AND sale_date <= $1::date) AS over_short30,
-      (SELECT COALESCE(SUM(sales_cents), 0) FROM uber_orders WHERE order_date > $1::date - 30 AND order_date <= $1::date) AS uber_sales30,
-      (SELECT COALESCE(SUM(sales_cents), 0) FROM uber_orders WHERE order_date > $1::date - 60 AND order_date <= $1::date - 30) AS uber_sales_prev30,
-      (SELECT COALESCE(SUM(${UBER_NET}), 0) FROM uber_orders WHERE order_date > $1::date - 30 AND order_date <= $1::date) AS uber_net30,
-      (SELECT COUNT(*) FROM uber_orders WHERE status = 'Completed' AND order_date > $1::date - 30 AND order_date <= $1::date) AS uber_orders30,
-      (SELECT COUNT(*) FROM expenses WHERE status = 'pending') AS pending`, [anchor]);
-
-  const weekly = await q(`
-    WITH s AS (SELECT date_trunc('week', sale_date)::date w, SUM(gross_cents) sales FROM sales_daily WHERE status = 'confirmed' GROUP BY 1),
-         p AS (SELECT date_trunc('week', e.expense_date)::date w, SUM(e.total_cents) purchases FROM expenses e WHERE e.status = 'confirmed' AND NOT ${FIXED} GROUP BY 1)
-    SELECT to_char(COALESCE(s.w, p.w), 'YYYY-MM-DD') AS week, s.sales, p.purchases
-    FROM s FULL JOIN p ON p.w = s.w ORDER BY 1`);
-
-  const monthly = await q(`
-    WITH s AS (SELECT date_trunc('month', sale_date)::date m, SUM(gross_cents) sales FROM sales_daily WHERE status = 'confirmed' GROUP BY 1),
-         p AS (SELECT date_trunc('month', e.expense_date)::date m,
-                      SUM(e.total_cents) FILTER (WHERE NOT ${FIXED}) purchases,
-                      SUM(e.total_cents) FILTER (WHERE ${FIXED}) fixed
-               FROM expenses e WHERE e.status = 'confirmed' GROUP BY 1),
-         u AS (SELECT date_trunc('month', order_date)::date m, SUM(sales_cents) uber_sales, SUM(${UBER_NET}) uber_net
-               FROM uber_orders WHERE order_date <= $1::date GROUP BY 1)
-    SELECT to_char(COALESCE(s.m, p.m, u.m), 'YYYY-MM') AS month, s.sales, p.purchases, p.fixed, u.uber_sales, u.uber_net
-    FROM s FULL JOIN p ON p.m = s.m FULL JOIN u ON u.m = COALESCE(s.m, p.m) ORDER BY 1`, [anchor]);
+  const [{ pending }] = await q(`SELECT COUNT(*) AS pending FROM expenses WHERE status = 'pending'`);
+  const daily = await buildDaily(db, anchor);
 
   const categories = await q(`
     SELECT name, SUM(cents) AS cents FROM (
@@ -105,5 +76,64 @@ export async function buildReport() {
     SELECT (SELECT max(expense_date)::text FROM expenses WHERE status = 'confirmed') AS last_expense,
            (SELECT max(created_at)::text FROM audit_log WHERE action = 'import') AS last_import`);
 
-  return { anchor, first, kpi, weekly, monthly, categories, suppliers, weekday, cashup, payroll, uber, uberItems, uberRange, meta };
+  return { anchor, first, pending, daily, categories, suppliers, weekday, cashup, payroll, uber, uberItems, uberRange, meta };
+}
+
+// One row per calendar day, so the page can add up any week, month or the whole history itself.
+// All money in centavos: s = restaurant sales, us/un = Uber gross/net, p = purchases, l = labor,
+// o = other fixed costs + card fees, c = card sales, x = cash over/short.
+//  - Labor comes from the weekly payroll lines (pay week k of a month = days 7(k-1)+1..7k); a month without
+//    them falls back to its "Sueldos" line spread over the month. Insurance/TE lines are spread over the month.
+//  - Other fixed costs (rent, utilities, taxes...) are spread evenly over the days of their month.
+//  - The card fee follows card sales: the month's fee divided by that month's card sales, per day.
+async function buildDaily(db, anchor) {
+  const [sales, uber, purch, fixed, weeks] = await Promise.all([
+    db.query(`SELECT sale_date::text d, gross_cents s, COALESCE(card_cents, 0) c, COALESCE(over_short_cents, 0) x
+              FROM sales_daily WHERE status = 'confirmed' AND sale_date <= $1::date ORDER BY 1`, [anchor]),
+    db.query(`SELECT order_date::text d, SUM(sales_cents) us, SUM(${UBER_NET}) un FROM uber_orders WHERE order_date <= $1::date GROUP BY 1`, [anchor]),
+    db.query(`SELECT e.expense_date::text d, SUM(e.total_cents) p FROM expenses e
+              WHERE e.status = 'confirmed' AND NOT ${FIXED} AND e.expense_date <= $1::date GROUP BY 1`, [anchor]),
+    db.query(`SELECT to_char(e.expense_date, 'YYYY-MM') m, e.total_cents t, COALESCE(e.notes, '') label, c.code
+              FROM expenses e LEFT JOIN expense_categories c ON c.id = e.category_id
+              WHERE e.status = 'confirmed' AND ${FIXED}`),
+    db.query(`SELECT to_char(month, 'YYYY-MM') m, week_no k, amount_cents a FROM payroll_weekly`),
+  ]);
+  const by = (rows) => new Map(rows.map((r) => [r.d, r]));
+  const S = by(sales); const U = by(uber); const P = by(purch);
+
+  const month = {};
+  const mm = (m) => (month[m] ??= { sueldos: 0, laborFixed: 0, other: 0, fee: 0, cardSum: 0, weeks: {} });
+  for (const f of fixed) {
+    const t = Number(f.t); const m = mm(f.m); const label = f.label.trim().toLowerCase();
+    if (label.startsWith('comisión tarjetas')) m.fee += t;
+    else if (f.code === 'payroll' && label === 'sueldos') m.sueldos += t;
+    else if (f.code === 'payroll') m.laborFixed += t;
+    else m.other += t;
+  }
+  for (const w of weeks) mm(w.m).weeks[Number(w.k)] = (mm(w.m).weeks[Number(w.k)] ?? 0) + Number(w.a);
+  for (const r of sales) { const m = mm(r.d.slice(0, 7)); m.cardSum += Number(r.c); }
+
+  const first = sales[0]?.d;
+  const out = [];
+  const end = new Date(anchor + 'T00:00:00Z');
+  for (let t = new Date(first + 'T00:00:00Z'); t <= end; t = new Date(t.getTime() + 86400000)) {
+    const d = t.toISOString().slice(0, 10);
+    const ym = d.slice(0, 7); const day = Number(d.slice(8, 10));
+    const dim = new Date(Date.UTC(Number(d.slice(0, 4)), Number(d.slice(5, 7)), 0)).getUTCDate();
+    const m = month[ym] ?? { sueldos: 0, laborFixed: 0, other: 0, fee: 0, cardSum: 0, weeks: {} };
+    const wk = Math.min(5, Math.ceil(day / 7));
+    const bucketDays = wk === 5 ? dim - 28 : 7;
+    const hasWeeks = Object.keys(m.weeks).length > 0;
+    const labor = (hasWeeks ? (m.weeks[wk] ?? 0) / bucketDays : m.sueldos / dim) + m.laborFixed / dim;
+    const sale = S.get(d);
+    const fee = m.cardSum ? (Number(sale?.c ?? 0) * m.fee) / m.cardSum : 0;
+    out.push({
+      d,
+      s: Number(sale?.s ?? 0), c: Number(sale?.c ?? 0), x: Number(sale?.x ?? 0),
+      us: Number(U.get(d)?.us ?? 0), un: Number(U.get(d)?.un ?? 0),
+      p: Number(P.get(d)?.p ?? 0),
+      l: Math.round(labor), o: Math.round(m.other / dim + fee),
+    });
+  }
+  return out;
 }

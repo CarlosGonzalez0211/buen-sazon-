@@ -48,6 +48,15 @@
   .bar .track { grid-column: 1 / -1; height: 8px; background: var(--line); border-radius: 6px; overflow: hidden; }
   .bar .fill { height: 100%; background: var(--chile); border-radius: 6px; }
   .banner { background: var(--mostaza); color: #2a160b; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; font-weight: 600; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card); }
+  .seg button { border: 0; border-radius: 0; background: transparent; padding: 8px 16px; }
+  .seg button.active { background: var(--chile); color: #fff; font-weight: 600; }
+  .nav { display: inline-flex; align-items: center; gap: 8px; }
+  .nav button { padding: 6px 12px; }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  #period { min-width: 170px; text-align: center; font-weight: 600; }
+  tr.total td { font-weight: 700; border-top: 2px solid var(--line); }
   footer { color: var(--muted); font-size: 12.5px; margin-top: 18px; }
   #login { max-width: 360px; margin: 14vh auto 0; padding: 0 16px; }
   #login form { display: grid; gap: 10px; margin-top: 14px; }
@@ -78,18 +87,31 @@
 
   <div id="pending" class="banner" hidden></div>
 
+  <div class="controls">
+    <div class="seg" role="tablist" aria-label="Periodo">
+      <button type="button" data-mode="semana" role="tab">Semana</button>
+      <button type="button" data-mode="mes" role="tab">Mes</button>
+      <button type="button" data-mode="historico" role="tab">Histórico</button>
+    </div>
+    <div class="nav" id="nav">
+      <button type="button" id="prev" aria-label="Periodo anterior">‹</button>
+      <span id="period"></span>
+      <button type="button" id="next" aria-label="Periodo siguiente">›</button>
+    </div>
+  </div>
+
   <div class="grid kpis" id="kpis"></div>
 
   <div class="card">
-    <h2>Ventas y compras por semana</h2>
-    <p class="note">Compras = surtido diario a proveedores (sin gastos fijos). Semanas de lunes a domingo.</p>
-    <div class="chart"><canvas id="weeklyChart" role="img" aria-label="Ventas y compras por semana"></canvas></div>
+    <h2 id="chartTitle">Ingresos y costos</h2>
+    <p class="note" id="chartNote"></p>
+    <div class="chart"><canvas id="weeklyChart" role="img" aria-label="Ingresos y costos del periodo"></canvas></div>
   </div>
 
   <div class="card" style="margin-top:12px">
-    <h2>Resultado por mes</h2>
-    <p class="note">Neto = ventas − compras − gastos fijos (renta, sueldos, servicios…). Todavía no descuenta comisiones de tarjeta. Abril empieza el 6: del 1 al 5 solo hay ventas.</p>
-    <div class="scroll"><table id="monthly"></table></div>
+    <h2 id="tableTitle">Detalle</h2>
+    <p class="note">Ingresos = ventas del restaurante + Uber neto. Neto = ingresos − compras − sueldos − otros fijos y comisión de tarjeta. Los gastos fijos mensuales se reparten por día; los sueldos van en la semana de pago del libro.</p>
+    <div class="scroll"><table id="periodTable"></table></div>
   </div>
 
   <div class="grid two">
@@ -163,46 +185,162 @@ function kpi(label, value, delta, tone) {
   return `<div class="card kpi"><div class="label">${label}</div><div class="value">${value}</div><div class="delta ${tone || ''}">${delta || ''}</div></div>`;
 }
 
+// ---- period selector: everything below is computed in the browser from one row per day ----
+const iso = (t) => new Date(t).toISOString().slice(0, 10);
+const ms = (d) => Date.parse(d + 'T00:00:00Z');
+const addD = (d, n) => iso(ms(d) + n * 86400000);
+const monday = (d) => { const w = new Date(ms(d)).getUTCDay(); return addD(d, -((w + 6) % 7)); };
+const monthStart = (d) => d.slice(0, 7) + '-01';
+const monthEnd = (d) => iso(Date.UTC(Number(d.slice(0, 4)), Number(d.slice(5, 7)), 0));
+const MES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+let DATA = null;
+let view = { mode: 'mes', ref: null };
+
+function agg(from, to) {
+  const t = { s: 0, c: 0, x: 0, us: 0, un: 0, p: 0, l: 0, o: 0, days: 0 };
+  for (const r of DATA.daily) if (r.d >= from && r.d <= to) {
+    for (const k of ['s', 'c', 'x', 'us', 'un', 'p', 'l', 'o']) t[k] += r[k];
+    if (r.s > 0) t.days++;
+  }
+  t.income = t.s + t.un;
+  t.net = t.income - t.p - t.l - t.o;
+  return t;
+}
+
+function periodOf(mode, ref) {
+  const last = DATA.anchor;
+  if (mode === 'semana') {
+    const from = monday(ref); const end = addD(from, 6); const to = end > last ? last : end;
+    const buckets = [];
+    for (let i = 0; i < 7; i++) {
+      const d = addD(from, i);
+      if (d <= last) buckets.push({ label: DOW[i + 1] + ' ' + Number(d.slice(8)), from: d, to: d });
+    }
+    return { from, to, full: end, label: `Semana del ${dia(from)} al ${dia(end)}`, buckets,
+      prev: { from: addD(from, -7), to: addD(from, -1) }, prevLabel: 'la semana anterior' };
+  }
+  if (mode === 'mes') {
+    const from = monthStart(ref); const end = monthEnd(ref); const to = end > last ? last : end;
+    const buckets = []; let c = from;
+    while (c <= to) {
+      const wEnd = addD(monday(c), 6); const b = wEnd < to ? wEnd : to;
+      buckets.push({ label: `Sem ${buckets.length + 1} · ${Number(c.slice(8))}${b === c ? '' : '–' + Number(b.slice(8))}`, from: c, to: b });
+      c = addD(b, 1);
+    }
+    const pFrom = monthStart(addD(from, -1)); const n = Math.round((ms(to) - ms(from)) / 86400000);
+    const pEnd = monthEnd(pFrom); const pTo = addD(pFrom, n) < pEnd ? addD(pFrom, n) : pEnd;
+    return { from, to, full: end, label: `${MES_LARGO[Number(from.slice(5, 7)) - 1]} ${from.slice(0, 4)}`, buckets,
+      prev: { from: pFrom, to: pTo }, prevLabel: to < end ? 'el mes anterior (mismos días)' : 'el mes anterior' };
+  }
+  const first = DATA.first; const buckets = []; let c = monthStart(first);
+  while (c <= last) {
+    const e = monthEnd(c);
+    buckets.push({ label: mes(c.slice(0, 7)), from: c < first ? first : c, to: e > last ? last : e });
+    c = addD(e, 1);
+  }
+  return { from: first, to: last, full: last, label: 'Todo el historial', buckets, prev: null };
+}
+
+function trend(cur, base, label) {
+  if (!base) return { text: '', tone: '' };
+  const d = (cur - base) / Math.abs(base);
+  if (!isFinite(d)) return { text: '', tone: '' };
+  return { text: `${d >= 0 ? '▲' : '▼'} ${pct(Math.abs(d))} vs ${label}`, tone: d >= 0 ? 'up' : 'down' };
+}
+
+function renderPeriod() {
+  const P = periodOf(view.mode, view.ref);
+  const cur = agg(P.from, P.to);
+  const prev = P.prev ? agg(P.prev.from, P.prev.to) : null;
+  document.querySelectorAll('.seg button').forEach((b) => b.classList.toggle('active', b.dataset.mode === view.mode));
+  $('nav').hidden = view.mode === 'historico';
+  $('period').textContent = P.label;
+  $('prev').disabled = !P.prev || P.from <= DATA.first;
+  $('next').disabled = P.full >= DATA.anchor;
+
+  const ratio = (a, b) => (b > 0 ? a / b : null);
+  const buy = ratio(cur.p, cur.income); const lab = ratio(cur.l, cur.income); const prime = ratio(cur.p + cur.l, cur.income);
+  const margin = ratio(cur.net, cur.income);
+  const pr = prev && prev.income > 0 ? { buy: prev.p / prev.income, lab: prev.l / prev.income, prime: (prev.p + prev.l) / prev.income, margin: prev.net / prev.income } : null;
+  const t1 = trend(cur.income, prev && prev.income, P.prevLabel);
+  const t2 = trend(cur.net, prev && prev.net, P.prevLabel);
+  const avg = cur.days ? cur.s / cur.days : null;
+  const t3 = trend(avg, prev && prev.days ? prev.s / prev.days : null, P.prevLabel);
+  const lowerBetter = (v, b) => (pr && v != null ? (v <= b ? 'up' : 'down') : '');
+  const was = (b) => (pr ? `Antes: ${pct(b)}` : '');
+  const cardShare = cur.s ? cur.c / cur.s : null;
+  $('kpis').innerHTML =
+    kpi('Ingresos', peso(cur.income), t1.text || `Ventas ${peso(cur.s)} + Uber ${peso(cur.un)}`, t1.tone) +
+    kpi('Neto', peso(cur.net), t2.text || (margin == null ? '' : `Margen ${pct(margin)}`), t2.tone) +
+    kpi('Margen', margin == null ? '—' : pct(margin), was(pr && pr.margin), pr && margin != null ? (margin >= pr.margin ? 'up' : 'down') : '') +
+    kpi('Costo primo', prime == null ? '—' : pct(prime), `Compras + sueldos${pr ? ' · antes ' + pct(pr.prime) : ''} · ref. común 55–65%`, lowerBetter(prime, pr && pr.prime)) +
+    kpi('Compras / ingresos', buy == null ? '—' : pct(buy), was(pr && pr.buy), lowerBetter(buy, pr && pr.buy)) +
+    kpi('Sueldos / ingresos', lab == null ? '—' : pct(lab), was(pr && pr.lab), lowerBetter(lab, pr && pr.lab)) +
+    kpi('Venta diaria promedio', peso(avg), t3.text || `${cur.days} días con venta`, t3.tone) +
+    kpi('Uber neto', peso(cur.un), `Ventas Uber ${peso(cur.us)}`) +
+    kpi('Ventas con tarjeta', cardShare == null ? '—' : pct(cardShare), 'Del total del restaurante') +
+    kpi('Caja', peso(cur.x), cur.x < 0 ? 'Faltante acumulado' : 'Sobrante acumulado', cur.x < 0 ? 'down' : 'up');
+
+  const rows = P.buckets.map((b) => ({ ...b, a: agg(b.from, b.to) }));
+  const unit = view.mode === 'semana' ? 'por día' : view.mode === 'mes' ? 'por semana' : 'por mes';
+  $('chartTitle').textContent = `Ingresos y costos ${unit}`;
+  $('chartNote').textContent = 'Barras de la izquierda: ventas + Uber neto. Barras de la derecha: compras + sueldos. Línea: neto.';
+  $('tableTitle').textContent = `Detalle ${unit}`;
+
+  charts = charts.filter((c) => { if (c.canvas.id === 'weeklyChart') { c.destroy(); return false; } return true; });
+  const grid = { color: css('--line') };
+  const money = (v) => '$' + Math.round(v / 100).toLocaleString('es-MX');
+  charts.push(new Chart($('weeklyChart'), {
+    data: { labels: rows.map((r) => r.label),
+      datasets: [
+        { type: 'bar', label: 'Ventas', data: rows.map((r) => r.a.s), backgroundColor: css('--hoja'), stack: 'ing', borderRadius: 3 },
+        { type: 'bar', label: 'Uber neto', data: rows.map((r) => r.a.un), backgroundColor: css('--mostaza'), stack: 'ing', borderRadius: 3 },
+        { type: 'bar', label: 'Compras', data: rows.map((r) => r.a.p), backgroundColor: css('--chile'), stack: 'cost', borderRadius: 3 },
+        { type: 'bar', label: 'Sueldos', data: rows.map((r) => r.a.l), backgroundColor: '#a86b3c', stack: 'cost', borderRadius: 3 },
+        { type: 'line', label: 'Neto', data: rows.map((r) => r.a.net), borderColor: css('--ink'), backgroundColor: css('--ink'), tension: .25, pointRadius: 3, borderWidth: 2 }] },
+    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${money(c.parsed.y)}` } }, legend: { position: 'bottom' } },
+      scales: { y: { grid, ticks: { callback: money } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 14 } } } },
+  }));
+
+  const line = (label, a, cls) => {
+    const m = a.income > 0 ? a.net / a.income : null;
+    return `<tr class="${cls || ''}"><td>${label}</td><td>${peso(a.s)}</td><td>${peso(a.un)}</td><td>${peso(a.p)}</td><td>${peso(a.l)}</td><td>${peso(a.o)}</td>` +
+           `<td class="${a.net >= 0 ? 'up' : 'down'}"><b>${peso(a.net)}</b></td><td>${m == null ? '—' : pct(m)}</td></tr>`;
+  };
+  $('periodTable').innerHTML =
+    '<tr><th>Periodo</th><th>Ventas</th><th>Uber neto</th><th>Compras</th><th>Sueldos</th><th>Otros fijos</th><th>Neto</th><th>Margen</th></tr>' +
+    rows.map((r) => line(r.label, r.a)).join('') + (rows.length > 1 ? line('Total', cur, 'total') : '');
+}
+
+function setMode(mode) {
+  view = { mode, ref: mode === 'historico' ? DATA.anchor : (view.ref || DATA.anchor) };
+  renderPeriod();
+}
+function shift(dir) {
+  const P = periodOf(view.mode, view.ref);
+  view.ref = view.mode === 'semana' ? addD(P.from, dir * 7) : addD(dir < 0 ? P.from : P.full, dir);
+  if (view.ref > DATA.anchor) view.ref = DATA.anchor;
+  if (view.ref < DATA.first) view.ref = DATA.first;
+  renderPeriod();
+}
+document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+$('prev').addEventListener('click', () => shift(-1));
+$('next').addEventListener('click', () => shift(1));
+
 function render(r) {
   $('login').hidden = true; $('app').hidden = false;
   if (r.empty) { $('kpis').innerHTML = '<div class="card">Todavía no hay datos.</div>'; return; }
-  const k = r.kpi;
+  DATA = r;
   $('coverage').textContent = `Datos del ${dia(r.first)} al ${dia(r.anchor)} · ${r.anchor.slice(0, 4)}`;
-  if (k.pending > 0) { $('pending').hidden = false; $('pending').textContent = `${k.pending} ticket(s) esperando confirmación en WhatsApp.`; }
-
-  const salesDelta = k.sales_prev30 ? (k.sales30 - k.sales_prev30) / k.sales_prev30 : null;
-  const allSales30 = k.sales30 + k.uber_sales30;
-  const buyShare = allSales30 ? k.purchases30 / allSales30 : null;
-  const prevAll = k.sales_prev30 + k.uber_sales_prev30;
-  const prevShare = prevAll ? k.purchases_prev30 / prevAll : null;
-  $('kpis').innerHTML =
-    kpi('Ventas · últimos 30 días', peso(k.sales30),
-        salesDelta == null ? '' : `${salesDelta >= 0 ? '▲' : '▼'} ${pct(Math.abs(salesDelta))} vs 30 días previos`, salesDelta >= 0 ? 'up' : 'down') +
-    kpi('Compras · últimos 30 días', peso(k.purchases30), `Surtido a proveedores`) +
-    kpi('Uber neto · 30 días', peso(k.uber_net30), `${k.uber_orders30} pedidos · ventas ${peso(k.uber_sales30)}`) +
-    kpi('Compras / ventas (con Uber)', buyShare == null ? '—' : pct(buyShare),
-        prevShare == null ? '' : `Antes: ${pct(prevShare)}`, buyShare <= prevShare ? 'up' : 'down') +
-    kpi('Venta diaria promedio', peso(k.days30 ? k.sales30 / k.days30 : null), `${k.days30} días con venta`) +
-    kpi('Ventas con tarjeta', k.card_share == null ? '—' : pct(k.card_share), 'Del total con detalle de caja') +
-    kpi('Caja · 30 días', peso(k.over_short30), k.over_short30 < 0 ? 'Faltante acumulado' : 'Sobrante acumulado', k.over_short30 < 0 ? 'down' : 'up');
+  if (r.pending > 0) { $('pending').hidden = false; $('pending').textContent = `${r.pending} ticket(s) esperando confirmación en WhatsApp.`; }
+  view = { mode: 'mes', ref: r.anchor };
 
   charts.forEach((c) => c.destroy()); charts = [];
   Chart.defaults.font.family = "'Bricolage Grotesque', system-ui, sans-serif";
   Chart.defaults.color = css('--muted');
   const grid = { color: css('--line') };
   const money = (v) => '$' + Math.round(v / 100).toLocaleString('es-MX');
-
-  const weeks = r.weekly.filter((w) => w.sales != null && w.purchases != null);
-  charts.push(new Chart($('weeklyChart'), {
-    type: 'bar',
-    data: { labels: weeks.map((w) => dia(w.week)),
-      datasets: [
-        { label: 'Ventas', data: weeks.map((w) => w.sales), backgroundColor: css('--hoja'), borderRadius: 4 },
-        { label: 'Compras', data: weeks.map((w) => w.purchases), backgroundColor: css('--chile'), borderRadius: 4 }] },
-    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-      plugins: { tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${money(c.parsed.y)}` } }, legend: { position: 'bottom' } },
-      scales: { y: { grid, ticks: { callback: money } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } } } },
-  }));
 
   charts.push(new Chart($('dowChart'), {
     type: 'bar',
@@ -211,15 +349,7 @@ function render(r) {
       scales: { y: { grid, ticks: { callback: money } }, x: { grid: { display: false } } } },
   }));
 
-  $('monthly').innerHTML =
-    '<tr><th>Mes</th><th>Ventas</th><th>Uber neto</th><th>Compras</th><th>Fijos</th><th>Neto</th><th>Margen</th></tr>' +
-    r.monthly.map((m) => {
-      const income = (m.sales ?? 0) + (m.uber_net ?? 0);
-      const net = income - (m.purchases ?? 0) - (m.fixed ?? 0);
-      const mg = income ? net / income : null;
-      return `<tr><td>${mes(m.month)}</td><td>${peso(m.sales)}</td><td>${peso(m.uber_net)}</td><td>${peso(m.purchases)}</td><td>${peso(m.fixed)}</td>` +
-             `<td class="${net >= 0 ? 'up' : 'down'}"><b>${peso(net)}</b></td><td>${mg == null ? '—' : pct(mg)}</td></tr>`;
-    }).join('');
+  renderPeriod();
 
   const maxCat = Math.max(...r.categories.map((c) => c.cents), 1);
   const totCat = r.categories.reduce((a, c) => a + c.cents, 0) || 1;
