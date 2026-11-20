@@ -171,13 +171,16 @@ function render(r) {
   if (k.pending > 0) { $('pending').hidden = false; $('pending').textContent = `${k.pending} ticket(s) esperando confirmación en WhatsApp.`; }
 
   const salesDelta = k.sales_prev30 ? (k.sales30 - k.sales_prev30) / k.sales_prev30 : null;
-  const buyShare = k.sales30 ? k.purchases30 / k.sales30 : null;
-  const prevShare = k.sales_prev30 ? k.purchases_prev30 / k.sales_prev30 : null;
+  const allSales30 = k.sales30 + k.uber_sales30;
+  const buyShare = allSales30 ? k.purchases30 / allSales30 : null;
+  const prevAll = k.sales_prev30 + k.uber_sales_prev30;
+  const prevShare = prevAll ? k.purchases_prev30 / prevAll : null;
   $('kpis').innerHTML =
     kpi('Ventas · últimos 30 días', peso(k.sales30),
         salesDelta == null ? '' : `${salesDelta >= 0 ? '▲' : '▼'} ${pct(Math.abs(salesDelta))} vs 30 días previos`, salesDelta >= 0 ? 'up' : 'down') +
     kpi('Compras · últimos 30 días', peso(k.purchases30), `Surtido a proveedores`) +
-    kpi('Compras / ventas', buyShare == null ? '—' : pct(buyShare),
+    kpi('Uber neto · 30 días', peso(k.uber_net30), `${k.uber_orders30} pedidos · ventas ${peso(k.uber_sales30)}`) +
+    kpi('Compras / ventas (con Uber)', buyShare == null ? '—' : pct(buyShare),
         prevShare == null ? '' : `Antes: ${pct(prevShare)}`, buyShare <= prevShare ? 'up' : 'down') +
     kpi('Venta diaria promedio', peso(k.days30 ? k.sales30 / k.days30 : null), `${k.days30} días con venta`) +
     kpi('Ventas con tarjeta', k.card_share == null ? '—' : pct(k.card_share), 'Del total con detalle de caja') +
@@ -209,11 +212,12 @@ function render(r) {
   }));
 
   $('monthly').innerHTML =
-    '<tr><th>Mes</th><th>Ventas</th><th>Compras</th><th>Fijos</th><th>Neto</th><th>Margen</th></tr>' +
+    '<tr><th>Mes</th><th>Ventas</th><th>Uber neto</th><th>Compras</th><th>Fijos</th><th>Neto</th><th>Margen</th></tr>' +
     r.monthly.map((m) => {
-      const net = (m.sales ?? 0) - (m.purchases ?? 0) - (m.fixed ?? 0);
-      const mg = m.sales ? net / m.sales : null;
-      return `<tr><td>${mes(m.month)}</td><td>${peso(m.sales)}</td><td>${peso(m.purchases)}</td><td>${peso(m.fixed)}</td>` +
+      const income = (m.sales ?? 0) + (m.uber_net ?? 0);
+      const net = income - (m.purchases ?? 0) - (m.fixed ?? 0);
+      const mg = income ? net / income : null;
+      return `<tr><td>${mes(m.month)}</td><td>${peso(m.sales)}</td><td>${peso(m.uber_net)}</td><td>${peso(m.purchases)}</td><td>${peso(m.fixed)}</td>` +
              `<td class="${net >= 0 ? 'up' : 'down'}"><b>${peso(net)}</b></td><td>${mg == null ? '—' : pct(mg)}</td></tr>`;
     }).join('');
 
@@ -230,7 +234,7 @@ function render(r) {
 
   if (r.uber && r.uber.length) {
     $('uberBlock').hidden = false;
-    $('uberNote').textContent = 'Datos del ' + dia(r.uberRange.first) + ' al ' + dia(r.uberRange.last) + '. Aparte de las ventas del restaurante; todavía no se suman al neto. Comisión = tarifa de Uber con IVA.';
+    $('uberNote').textContent = 'Datos del ' + dia(r.uberRange.first) + ' al ' + dia(r.uberRange.last) + '. Aparte de las ventas del restaurante (no pasan por SoftRestaurant). El neto mensual suma «Uber neto» = lo que Uber paga por esas ventas (ya sin comisión ni promociones). Las retenciones de impuestos no se restan como gasto; confírmalo con tu contadora. Comisión = tarifa de Uber con IVA.';
     $('uber').innerHTML = '<tr><th>Mes</th><th>Pedidos</th><th>Ventas</th><th>Comisión</th><th>Retenciones</th><th>Depósito</th></tr>' +
       r.uber.map((u) => `<tr><td>${u.month.slice(0, 7)}</td><td>${u.orders}</td><td>${peso(u.sales)}</td><td>${peso(u.fees)}</td><td>${peso(u.withheld)}</td><td>${peso(u.payout)}</td></tr>`).join('');
     $('uberItems').innerHTML = '<tr><th>Platillo</th><th>Piezas</th><th>Ventas</th></tr>' +
